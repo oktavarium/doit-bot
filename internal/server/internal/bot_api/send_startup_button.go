@@ -15,6 +15,7 @@ func (api *BotAPI) SendStartupButton(
 	buttonText string,
 	messageText string,
 	chatID string,
+	startapp string,
 ) error {
 	if buttonText == "" || messageText == "" || chatID == "" {
 		return doiterr.ErrEmptyParameters
@@ -25,7 +26,7 @@ func (api *BotAPI) SendStartupButton(
 			{
 				{
 					Text: buttonText,
-					URL:  "https://t.me/" + api.botName + "?startapp=" + chatID,
+					URL:  "https://t.me/" + api.botName + "?startapp=" + startapp,
 					WebApp: &models.WebAppInfo{
 						URL: api.webAppURL,
 					}},

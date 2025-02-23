@@ -25,5 +25,7 @@ func (h *Handlers) GetData(c *gin.Context) {
 		return
 	}
 
+	c.String(http.StatusOK, "this is a test string")
+
 	slog.Info("Get data request: ", slog.Any("init data", parsedData), slog.String("body", string(body)))
 }

@@ -62,7 +62,7 @@ func (s *server) serve() error {
 	eg.Go(s.api.Serve)
 	go s.bot.Start(ctx)
 	if err := eg.Wait(); err != nil {
-		return fmt.Errorf("errors ")
+		return fmt.Errorf("start api: %w", err)
 	}
 
 	return nil
