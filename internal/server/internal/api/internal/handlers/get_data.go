@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"io"
 	"log/slog"
 	"net/http"
 
@@ -19,13 +18,7 @@ func (h *Handlers) GetData(c *gin.Context) {
 		return
 	}
 
-	body, err := io.ReadAll(c.Request.Body)
-	if err != nil {
-		c.Status(http.StatusBadRequest)
-		return
-	}
-
 	c.String(http.StatusOK, "this is a test string")
 
-	slog.Info("Get data request: ", slog.Any("init data", parsedData), slog.String("body", string(body)))
+	slog.Info("Get data request: ", slog.Any("init data", parsedData))
 }

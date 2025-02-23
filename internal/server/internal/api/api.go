@@ -12,6 +12,7 @@ import (
 type API struct {
 	router   *gin.Engine
 	endpoint string
+	url      string
 	handlers *handlers.Handlers
 }
 
@@ -20,7 +21,7 @@ func New(endpoint string, token string) *API {
 	router.ContextWithFallback = true
 
 	middleware.Init(router, token)
-	handlers := handlers.New(router)
+	handlers := handlers.New(router, token)
 
 	return &API{
 		router:   router,

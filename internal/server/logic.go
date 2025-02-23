@@ -16,7 +16,6 @@ func (s *server) sendStartupButton(ctx context.Context, chatID int64, userID int
 		"Start WebAPP",
 		"Hello!",
 		strconv.Itoa(int(chatID)),
-		s.cfg.GetEndpoint(),
 	); err != nil {
 		return fmt.Errorf("send startup message: %w", err)
 	}
