@@ -10,12 +10,14 @@ import (
 type Config struct {
 	token     string
 	webAppURL string
+	endpoint  string
 }
 
 func GetConfig() (*Config, error) {
 	cfg := &Config{
 		token:     os.Getenv("BOT_TOKEN"),
 		webAppURL: os.Getenv("WEBAPP_URL"),
+		endpoint:  os.Getenv("ENDPOINT"),
 	}
 
 	if err := cfg.validate(); err != nil {
@@ -33,6 +35,10 @@ func (c *Config) validate() error {
 		return doiterr.ErrEmptyWebAppURL
 	}
 
+	if c.GetEndpoint() == "" {
+		return doiterr.ErrEmptyEndpoint
+	}
+
 	return nil
 }
 
@@ -42,4 +48,8 @@ func (c *Config) GetToken() string {
 
 func (c *Config) GetWebAppURL() string {
 	return c.webAppURL
+}
+
+func (c *Config) GetEndpoint() string {
+	return c.endpoint
 }

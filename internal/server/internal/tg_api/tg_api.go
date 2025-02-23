@@ -10,7 +10,7 @@ type TgAPI struct {
 	handlers *handlers.Handlers
 }
 
-func Init() (*TgAPI, error) {
+func New() (*TgAPI, error) {
 	return &TgAPI{
 		handlers: handlers.New(),
 	}, nil

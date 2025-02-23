@@ -20,6 +20,8 @@ func Run() error {
 
 	server.initLogic()
 
-	server.serve()
+	if err := server.serve(); err != nil {
+		return fmt.Errorf("server serve: %w", err)
+	}
 	return nil
 }
