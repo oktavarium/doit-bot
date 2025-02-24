@@ -25,10 +25,8 @@ func (api *BotAPI) SendStartupButton(
 			{
 				{
 					Text: buttonText,
-					URL:  "https://t.me/" + api.botName + "/startapp",
-					WebApp: &models.WebAppInfo{
-						URL: api.webAppURL,
-					}},
+					URL:  "https://t.me/" + api.botName + "?startapp=inline",
+				},
 			},
 		},
 	}

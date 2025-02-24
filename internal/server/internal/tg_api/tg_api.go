@@ -23,3 +23,4 @@ func (api *TgAPI) GetDefaultHandler() bot.HandlerFunc {
 func (api *TgAPI) SetBotAddedCallback(cb types.BotAddedCallBack) {
 	api.handlers.SetBotAddedCallback(cb)
 }
+

@@ -37,7 +37,7 @@ func newServer(cfg *config.Config) (*server, error) {
 		return nil, fmt.Errorf("create tg bot: %w", err)
 	}
 
-	botAPI, err := bot_api.New(context.Background(), cfg.GetWebAppURL(), bot)
+	botAPI, err := bot_api.New(context.Background(), bot)
 	if err != nil {
 		return nil, fmt.Errorf("create bot api: %w", err)
 	}

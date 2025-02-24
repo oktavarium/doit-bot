@@ -12,7 +12,6 @@ import (
 type API struct {
 	router   *gin.Engine
 	endpoint string
-	url      string
 	handlers *handlers.Handlers
 }
 

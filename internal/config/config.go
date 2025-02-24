@@ -8,16 +8,14 @@ import (
 )
 
 type Config struct {
-	token     string
-	webAppURL string
-	endpoint  string
+	token    string
+	endpoint string
 }
 
 func GetConfig() (*Config, error) {
 	cfg := &Config{
-		token:     os.Getenv("BOT_TOKEN"),
-		webAppURL: os.Getenv("WEBAPP_URL"),
-		endpoint:  os.Getenv("ENDPOINT"),
+		token:    os.Getenv("BOT_TOKEN"),
+		endpoint: os.Getenv("ENDPOINT"),
 	}
 
 	if err := cfg.validate(); err != nil {
@@ -31,10 +29,6 @@ func (c *Config) validate() error {
 		return doiterr.ErrEmptyToken
 	}
 
-	if c.GetWebAppURL() == "" {
-		return doiterr.ErrEmptyWebAppURL
-	}
-
 	if c.GetEndpoint() == "" {
 		return doiterr.ErrEmptyEndpoint
 	}
@@ -44,10 +38,6 @@ func (c *Config) validate() error {
 
 func (c *Config) GetToken() string {
 	return c.token
-}
-
-func (c *Config) GetWebAppURL() string {
-	return c.webAppURL
 }
 
 func (c *Config) GetEndpoint() string {
