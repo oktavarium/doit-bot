@@ -7,15 +7,17 @@ import (
 	"github.com/oktavarium/doit-bot/internal/doiterr"
 )
 
+const defaultListenAddress = "0.0.0.0:8080"
+
 type Config struct {
-	token    string
-	endpoint string
+	token         string
+	listenAddress string
 }
 
 func GetConfig() (*Config, error) {
 	cfg := &Config{
-		token:    os.Getenv("BOT_TOKEN"),
-		endpoint: os.Getenv("ENDPOINT"),
+		token:         os.Getenv("BOT_TOKEN"),
+		listenAddress: os.Getenv("LISTEN_ADDRESS"),
 	}
 
 	if err := cfg.validate(); err != nil {
@@ -30,7 +32,7 @@ func (c *Config) validate() error {
 	}
 
 	if c.GetEndpoint() == "" {
-		return doiterr.ErrEmptyEndpoint
+		c.listenAddress = defaultListenAddress
 	}
 
 	return nil
@@ -41,5 +43,5 @@ func (c *Config) GetToken() string {
 }
 
 func (c *Config) GetEndpoint() string {
-	return c.endpoint
+	return c.listenAddress
 }
