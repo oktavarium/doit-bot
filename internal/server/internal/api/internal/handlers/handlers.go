@@ -23,7 +23,7 @@ func New(router *gin.Engine, token string) *Handlers {
 
 func (h *Handlers) init() {
 	apiGroup := h.router.Group("/api", auth.Middleware(h.token))
-	apiGroup.POST("/api", h.CreateData)
-	apiGroup.GET("/api", h.GetData)
-	h.router.Static("/", "../../web/build")
+	apiGroup.POST("/", h.CreateData)
+	apiGroup.GET("/", h.GetData)
+
 }
