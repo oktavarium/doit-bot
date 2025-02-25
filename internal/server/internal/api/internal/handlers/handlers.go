@@ -25,8 +25,5 @@ func (h *Handlers) init() {
 	apiGroup := h.router.Group("/api", auth.Middleware(h.token))
 	apiGroup.POST("/api", h.CreateData)
 	apiGroup.GET("/api", h.GetData)
-
-	h.router.LoadHTMLGlob("../../web/templates/*")
-	h.router.GET("/", h.Main)
-	h.router.Static("/static", "../../web/static")
+	h.router.Static("/", "../../web/build")
 }
