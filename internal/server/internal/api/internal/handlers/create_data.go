@@ -1,12 +1,12 @@
 package handlers
 
 import (
-	"io"
-	"log/slog"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/oktavarium/doit-bot/internal/server/internal/api/internal/common"
+	"github.com/oktavarium/doit-bot/internal/server/internal/dto"
 	initdata "github.com/telegram-mini-apps/init-data-golang"
 )
 
@@ -18,11 +18,12 @@ func (h *Handlers) CreateData(c *gin.Context) {
 		return
 	}
 
-	body, err := io.ReadAll(c.Request.Body)
-	if err != nil {
-		c.Status(http.StatusBadRequest)
+	var task dto.Task
+	ownerID := strconv.Itoa(int(parsedData.User.ID))
+	task.Owner = &ownerID
+	if err := c.BindJSON(&task); err != nil {
 		return
 	}
 
-	slog.Info("Create data request: ", slog.Any("init data", parsedData), slog.String("body", string(body)))
+	h.storage.CreateTask(c, &task)
 }

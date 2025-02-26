@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/oktavarium/doit-bot/internal/server/internal/api/internal/handlers"
 	"github.com/oktavarium/doit-bot/internal/server/internal/api/internal/middleware"
+	"github.com/oktavarium/doit-bot/internal/server/internal/storage"
 )
 
 type API struct {
@@ -20,7 +21,7 @@ func New(endpoint string, token string) *API {
 	router.ContextWithFallback = true
 
 	middleware.Init(router, token)
-	handlers := handlers.New(router, token)
+	handlers := handlers.New(router, token, storage.NewFileStorage())
 
 	return &API{
 		router:   router,

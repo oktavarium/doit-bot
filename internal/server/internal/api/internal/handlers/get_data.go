@@ -3,6 +3,7 @@ package handlers
 import (
 	"log/slog"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/oktavarium/doit-bot/internal/server/internal/api/internal/common"
@@ -18,7 +19,8 @@ func (h *Handlers) GetData(c *gin.Context) {
 		return
 	}
 
-	c.String(http.StatusOK, "this is a test string")
+	tasks, _ := h.storage.GetTasks(c, strconv.Itoa(int(parsedData.User.ID)))
+	c.JSON(http.StatusOK, tasks)
 
 	slog.Info("Get data request: ", slog.Any("init data", parsedData))
 }
