@@ -8,16 +8,19 @@ import (
 )
 
 const defaultListenAddress = "0.0.0.0:8080"
+const defaultURI = "mongodb://127.0.0.1:27017/?directConnection=true"
 
 type Config struct {
 	token         string
 	listenAddress string
+	uri           string
 }
 
 func GetConfig() (*Config, error) {
 	cfg := &Config{
 		token:         os.Getenv("BOT_TOKEN"),
 		listenAddress: os.Getenv("LISTEN_ADDRESS"),
+		uri:           os.Getenv("DB_URI"),
 	}
 
 	if err := cfg.validate(); err != nil {
@@ -35,6 +38,10 @@ func (c *Config) validate() error {
 		c.listenAddress = defaultListenAddress
 	}
 
+	if c.GetUri() == "" {
+		c.uri = defaultURI
+	}
+
 	return nil
 }
 
@@ -44,4 +51,8 @@ func (c *Config) GetToken() string {
 
 func (c *Config) GetEndpoint() string {
 	return c.listenAddress
+}
+
+func (c *Config) GetUri() string {
+	return c.uri
 }

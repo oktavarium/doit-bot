@@ -3,53 +3,47 @@ package server
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"os"
 	"os/signal"
 
-	"github.com/go-telegram/bot"
 	"github.com/oktavarium/doit-bot/internal/config"
 	"github.com/oktavarium/doit-bot/internal/server/internal/api"
-	"github.com/oktavarium/doit-bot/internal/server/internal/bot_api"
-	"github.com/oktavarium/doit-bot/internal/server/internal/tg_api"
+	"github.com/oktavarium/doit-bot/internal/server/internal/model"
+	"github.com/oktavarium/doit-bot/internal/server/internal/storage"
+	"github.com/oktavarium/doit-bot/internal/server/internal/tg/tgapi"
+	"github.com/oktavarium/doit-bot/internal/server/internal/tg/tgclient"
 	"golang.org/x/sync/errgroup"
 )
 
 type server struct {
-	bot    *bot.Bot
-	cfg    *config.Config
-	tgAPI  *tg_api.TgAPI
-	botAPI *bot_api.BotAPI
-	api    *api.API
+	tgapi *tgapi.TGAPI
+	api   *api.API
 }
 
 func newServer(cfg *config.Config) (*server, error) {
-	tgAPI, err := tg_api.New()
+	tgclient, err := tgclient.New(cfg.GetToken())
+	if err != nil {
+		return nil, fmt.Errorf("create tg client: %w", err)
+	}
+
+	storage, err := storage.New(cfg.GetUri())
+	if err != nil {
+		return nil, fmt.Errorf("new storage: %w", err)
+	}
+
+	model := model.New(tgclient, storage)
+
+	tgapi, err := tgapi.New(cfg.GetToken(), model)
 	if err != nil {
 		return nil, fmt.Errorf("init tg api: %w", err)
 	}
 
-	opts := []bot.Option{
-		bot.WithDefaultHandler(tgAPI.GetDefaultHandler()),
-	}
-
-	bot, err := bot.New(cfg.GetToken(), opts...)
-	if err != nil {
-		return nil, fmt.Errorf("create tg bot: %w", err)
-	}
-
-	botAPI, err := bot_api.New(context.Background(), bot)
-	if err != nil {
-		return nil, fmt.Errorf("create bot api: %w", err)
-	}
-
-	api := api.New(cfg.GetEndpoint(), cfg.GetToken())
+	api := api.New(cfg.GetEndpoint(), cfg.GetToken(), model)
 
 	return &server{
-		bot:    bot,
-		cfg:    cfg,
-		tgAPI:  tgAPI,
-		botAPI: botAPI,
-		api:    api,
+		tgapi: tgapi,
+		api:   api,
 	}, nil
 }
 
@@ -59,11 +53,17 @@ func (s *server) serve() error {
 
 	eg, ctx := errgroup.WithContext(ctx)
 
-	eg.Go(s.api.Serve)
-	go s.bot.Start(ctx)
+	eg.Go(func() error {
+		return s.api.Serve(ctx)
+	})
+	eg.Go(func() error {
+		s.tgapi.Serve(ctx)
+		return nil
+	})
 	if err := eg.Wait(); err != nil {
 		return fmt.Errorf("start api: %w", err)
 	}
 
+	slog.Info("Goodbye!")
 	return nil
 }

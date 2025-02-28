@@ -1,13 +1,16 @@
 package api
 
 import (
+	"context"
 	"fmt"
+	"log/slog"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/oktavarium/doit-bot/internal/server/internal/api/internal/handlers"
 	"github.com/oktavarium/doit-bot/internal/server/internal/api/internal/middleware"
-	"github.com/oktavarium/doit-bot/internal/server/internal/storage"
+	"github.com/oktavarium/doit-bot/internal/server/internal/model"
 )
 
 type API struct {
@@ -16,12 +19,12 @@ type API struct {
 	handlers *handlers.Handlers
 }
 
-func New(endpoint string, token string) *API {
+func New(endpoint string, token string, model *model.Model) *API {
 	router := gin.Default()
 	router.ContextWithFallback = true
 
 	middleware.Init(router, token)
-	handlers := handlers.New(router, token, storage.NewFileStorage())
+	handlers := handlers.New(router, token, model)
 
 	return &API{
 		router:   router,
@@ -31,11 +34,20 @@ func New(endpoint string, token string) *API {
 
 }
 
-func (api *API) Serve() error {
+func (api *API) Serve(ctx context.Context) error {
 	server := &http.Server{
 		Addr:    api.endpoint,
 		Handler: api.router,
 	}
+
+	go func(ctx context.Context) {
+		<-ctx.Done()
+		ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+		defer cancel()
+		if err := server.Shutdown(ctx); err != nil {
+			slog.Error("shutdown server", slog.Any("error", err))
+		}
+	}(ctx)
 
 	if err := server.ListenAndServe(); err != nil {
 		return fmt.Errorf("listen and serve: %w,", err)

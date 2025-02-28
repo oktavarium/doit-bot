@@ -1,9 +1,9 @@
 package dto
 
 type Task struct {
-	Id          *string `json:"id,omitempty"`
-	Owner       *string `json:"owner,omitempty"`
-	Summary     *string `json:"summary,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Done        *bool   `json:"done,omitempty"`
+	Id       string `json:"id"`
+	Owner    int64  `json:"owner"`
+	Assignee *int64  `json:"assignee,omitempty"`
+	Summary  string `json:"summary"`
+	Done     bool   `json:"done"`
 }

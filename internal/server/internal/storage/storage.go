@@ -1,7 +1,7 @@
 package storage
 
-import "github.com/oktavarium/doit-bot/internal/server/internal/storage/internal/file"
+import "github.com/oktavarium/doit-bot/internal/server/internal/storage/internal/db"
 
-func NewFileStorage() Storage {
-	return file.NewStorage()
+func New(uri string) (Storage, error) {
+	return db.New(uri)
 }

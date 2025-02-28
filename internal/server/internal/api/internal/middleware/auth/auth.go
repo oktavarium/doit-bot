@@ -19,13 +19,13 @@ func Middleware(token string) gin.HandlerFunc {
 			return
 		}
 
-		expIn := 24 * time.Hour
 		if _, err := initdata.Parse(initData); err != nil {
 			slog.Info("bad request")
 			c.AbortWithStatus(http.StatusBadRequest)
 			return
 		}
 
+		expIn := 24 * time.Hour
 		if err := initdata.Validate(initData, token, expIn); err != nil {
 			slog.Info("unauthorized")
 			c.AbortWithStatus(http.StatusUnauthorized)
