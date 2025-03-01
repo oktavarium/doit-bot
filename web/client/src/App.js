@@ -1,22 +1,23 @@
 import './App.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import BasicTextFields from './components/BasicTextFields';
 import DataTable from './components/DataTable';
 import BasicButton from './components/BasicButton';
-import { retrieveLaunchParams } from '@telegram-apps/sdk';
+import { retrieveRawInitData } from '@telegram-apps/sdk';
 
 function App() {
   const [tableData, setTableData] = useState([]);
   const [inputSummary, setInputSummary] = useState('');
-  const [inputDescription, setInputDescription] = useState('');
   const [selectedRows, setSelectedRows] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
+
 
   // Загрузка данных
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const { initDataRaw } = retrieveLaunchParams();
+      const initDataRaw  = retrieveRawInitData();
       const response = await fetch('/api/get_tasks', {
         method: 'POST',
         headers: {
@@ -24,7 +25,7 @@ function App() {
         },
       });
       const data = await response.json();
-      setTableData(data);
+      setTableData(data.tasks);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -33,15 +34,19 @@ function App() {
   };
 
 
+  useEffect(() => {
+    fetchData();
+ }, []);
+
   // Отправка новой задачи
   const handleSend = async () => {
-    if (!inputSummary.trim() || !inputDescription.trim()) {
+    if (!inputSummary.trim()) {
       alert('Пожалуйста, заполните все поля');
       return;
     }
 
     try {
-      const { initDataRaw } = retrieveLaunchParams();
+      const initDataRaw  = retrieveRawInitData();
       await fetch('/api/create_task', {
         method: 'POST',
         headers: {
@@ -55,7 +60,6 @@ function App() {
       });
 
       setInputSummary('');
-      setInputDescription('');
       setSelectedRows([]);
       fetchData(); // Обновляем данные после отправки
     } catch (error) {
@@ -74,11 +78,6 @@ function App() {
             label='Название'
             value={inputSummary}
             onChange={(e) => setInputSummary(e.target.value)}
-          />
-          <BasicTextFields
-            label='Описание'
-            value={inputDescription}
-            onChange={(e) => setInputDescription(e.target.value)}
           />
         </div>
         <BasicButton onClick={handleSend} disabled={isLoading} />
