@@ -5,7 +5,8 @@ __debug*
 
 
 # dependencies
-/node_modules
+/web/client/node_modules
+/web/client/build
 /.pnp
 .pnp.js
 

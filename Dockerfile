@@ -13,7 +13,7 @@ RUN go mod download
 COPY cmd/ /cmd
 COPY internal/ /internal
 COPY web/ /web
-COPY --from=front_builder /build/ /web/client/
+COPY --from=front_builder /build/ /web/client/build
 RUN go build -ldflags="-s -w" -o /bin/server /cmd/main
 
 FROM alpine
