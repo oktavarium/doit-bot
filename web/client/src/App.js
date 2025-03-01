@@ -3,37 +3,35 @@ import { useState, useEffect } from 'react';
 import BasicTextFields from './components/BasicTextFields';
 import DataTable from './components/DataTable';
 import BasicButton from './components/BasicButton';
-
 import { retrieveLaunchParams, init, miniApp } from '@telegram-apps/sdk';
-
 
 const initializeTelegramSDK = async () => {
   try {
     await init();
 
-
     if (miniApp.ready.isAvailable()) {
       await miniApp.ready();
     }
-
-
   } catch (error) {
     console.error('Ошибка инициализации:', error);
   }
 };
-
 
 function App() {
   const [tableData, setTableData] = useState([]);
   const [inputSummary, setInputSummary] = useState('');
   const [inputDescription, setInputDescription] = useState('');
   const [selectedRows, setSelectedRows] = useState([]);
-
-  initializeTelegramSDK();
+  const [isLoading, setIsLoading] = useState(false);
 
   const { initDataRaw } = retrieveLaunchParams();
 
+  useEffect(() => {
+    initializeTelegramSDK();
+  }, []);
+
   const fetchData = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch('/api/get_tasks', {
         method: 'POST',
@@ -45,15 +43,20 @@ function App() {
       setTableData(data);
     } catch (error) {
       console.error('Error fetching data:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [initDataRaw]);
 
   const handleSend = async () => {
-    if (!inputSummary.trim() || !inputDescription.trim()) return;
+    if (!inputSummary.trim() || !inputDescription.trim()) {
+      alert('Пожалуйста, заполните все поля');
+      return;
+    }
 
     try {
       await fetch('/api/create_task', {
@@ -64,13 +67,14 @@ function App() {
         },
         body: JSON.stringify({
           summary: inputSummary,
-          done: false
+          description: inputDescription,
+          done: false,
         }),
       });
 
       setInputSummary('');
       setInputDescription('');
-      setSelectedRows([]); // Сбрасываем выбор
+      setSelectedRows([]);
       fetchData();
     } catch (error) {
       console.error('Error sending data:', error);
@@ -95,13 +99,17 @@ function App() {
             onChange={(e) => setInputDescription(e.target.value)}
           />
         </div>
-        <BasicButton onClick={handleSend} />
+        <BasicButton onClick={handleSend} disabled={isLoading} />
       </div>
-      <DataTable
-        rows={tableData}
-        selectedRows={selectedRows}
-        onSelectionChange={setSelectedRows}
-      />
+      {isLoading ? (
+        <p>Загрузка...</p>
+      ) : (
+        <DataTable
+          rows={tableData}
+          selectedRows={selectedRows}
+          onSelectionChange={setSelectedRows}
+        />
+      )}
     </div>
   );
 }
