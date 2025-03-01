@@ -23,6 +23,11 @@ func (h *Handlers) UpdateTask(c *gin.Context) {
 		return
 	}
 
+	if err := validateUpdateTaskRequest(request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	if err := h.model.UpdateTask(
 		c,
 		owner,
