@@ -1,4 +1,3 @@
-.PHONY: build
 build: build-front build-back
 
 build-back:

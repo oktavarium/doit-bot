@@ -1,9 +1,9 @@
 import './App.css';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import BasicTextFields from './components/BasicTextFields';
 import DataTable from './components/DataTable';
 import BasicButton from './components/BasicButton';
-import { retrieveLaunchParams, init, miniApp } from '@telegram-apps/sdk';
+import { retrieveLaunchParams } from '@telegram-apps/sdk';
 
 function App() {
   const [tableData, setTableData] = useState([]);
@@ -11,42 +11,12 @@ function App() {
   const [inputDescription, setInputDescription] = useState('');
   const [selectedRows, setSelectedRows] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [initDataRaw, setInitDataRaw] = useState('');
-
-  // Инициализация Telegram SDK и получение initDataRaw
-  useEffect(() => {
-    const initialize = async () => {
-      try {
-        await init();
-
-        if (miniApp.ready.isAvailable()) {
-          await miniApp.ready();
-        }
-
-        // Получаем initDataRaw после инициализации
-        const { initDataRaw: rawData } = retrieveLaunchParams();
-        if (rawData) {
-          setInitDataRaw(rawData);
-        } else {
-          console.error('initDataRaw is empty');
-        }
-      } catch (error) {
-        console.error('Ошибка инициализации:', error);
-      }
-    };
-
-    initialize();
-  }, []);
 
   // Загрузка данных
   const fetchData = async () => {
-    if (!initDataRaw) {
-      console.error('initDataRaw is empty, skipping fetchData');
-      return;
-    }
-
     setIsLoading(true);
     try {
+      const { initDataRaw } = retrieveLaunchParams();
       const response = await fetch('/api/get_tasks', {
         method: 'POST',
         headers: {
@@ -62,12 +32,6 @@ function App() {
     }
   };
 
-  // Выполняем fetchData при изменении initDataRaw
-  useEffect(() => {
-    if (initDataRaw) {
-      fetchData();
-    }
-  }, [initDataRaw]);
 
   // Отправка новой задачи
   const handleSend = async () => {
@@ -76,12 +40,8 @@ function App() {
       return;
     }
 
-    if (!initDataRaw) {
-      console.error('initDataRaw is empty, cannot send data');
-      return;
-    }
-
     try {
+      const { initDataRaw } = retrieveLaunchParams();
       await fetch('/api/create_task', {
         method: 'POST',
         headers: {
@@ -90,7 +50,6 @@ function App() {
         },
         body: JSON.stringify({
           summary: inputSummary,
-          description: inputDescription,
           done: false,
         }),
       });
