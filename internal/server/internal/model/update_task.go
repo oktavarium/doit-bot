@@ -6,11 +6,12 @@ import (
 
 func (m *Model) UpdateTaskById(
 	ctx context.Context,
-	owner int64,
-	id string,
-	assignee *int64,
+	actorId string,
+	taskId string,
+	assigneeId *string,
 	summary *string,
+	description *string,
 	done *bool,
 ) error {
-	return m.storage.UpdateTaskById(ctx, owner, id, assignee, summary, done)
+	return m.storage.UpdateTaskById(ctx, actorId, taskId, assigneeId, summary, description, done)
 }

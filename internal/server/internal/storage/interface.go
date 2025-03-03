@@ -9,26 +9,27 @@ import (
 type Storage interface {
 	CreateTask(
 		ctx context.Context,
-		owner string,
-		assignee *string,
-		list *string,
+		actorId string,
+		assigneeId *string,
+		listId *string,
 		summary string,
 		description *string,
 	) (id string, err error)
 	UpdateTaskById(ctx context.Context,
-		owner int64,
-		id string,
-		assignee *int64,
+		actorId string,
+		taskId string,
+		assigneeId *string,
 		summary *string,
+		description *string,
 		done *bool,
 	) error
 	SetTaskDoneById(ctx context.Context,
-		owner int64,
-		id string,
+		actorId string,
+		taskId string,
 		done bool,
 	) error
-	GetTaskById(ctx context.Context, id string) (*dto.Task, error)
-	DeleteTaskById(ctx context.Context, owner int64, id string) error
-	GetTasksByOwner(ctx context.Context, owner int64) ([]*dto.Task, error)
-	GetUserByTgId(ctx context.Context, id int64) (*dto.User, error)
+	GetTaskById(ctx context.Context, taskId string) (*dto.Task, error)
+	DeleteTaskById(ctx context.Context, actorId string, taskId string) error
+	GetTasksByOwner(ctx context.Context, actorId string) ([]*dto.Task, error)
+	GetUserByTgId(ctx context.Context, tg_id int64) (*dto.User, error)
 }

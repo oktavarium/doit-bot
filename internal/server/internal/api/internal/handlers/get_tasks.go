@@ -8,15 +8,13 @@ import (
 )
 
 func (h *Handlers) GetTasksByOwner(c *gin.Context) {
-	initData, ok := common.CtxInitData(c)
+	actorId, ok := common.ActorIdFromContext(c)
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, map[string]any{
-			"message": "Init data not found",
-		})
+		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
-	tasks, err := h.model.GetTasksByOwner(c, initData.User.ID)
+	tasks, err := h.model.GetTasksByOwner(c, actorId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

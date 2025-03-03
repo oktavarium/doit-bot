@@ -9,27 +9,35 @@ import (
 
 func (db *storage) CreateTask(
 	ctx context.Context,
-	owner string,
-	assignee *string,
-	list *string,
+	actorId string,
+	assigneeId *string,
+	listId *string,
 	summary string,
 	description *string,
 ) (string, error) {
-	bsonOwnerId, err := primitive.ObjectIDFromHex(owner)
+	bsonActorId, err := primitive.ObjectIDFromHex(actorId)
 	if err != nil {
 		return "", fmt.Errorf("invalid id: %w", err)
 	}
 
-	assigneeId, err := primitive.ObjectIDFromHex(assignee)
-	if err != nil {
-		return "", fmt.Errorf("invalid id: %w", err)
+	var bsonAssigneeId primitive.ObjectID
+	if assigneeId != nil {
+		bsonAssigneeId, err = primitive.ObjectIDFromHex(*assigneeId)
+		if err != nil {
+			return "", fmt.Errorf("invalid id: %w", err)
+		}
 	}
 
-	result, err := db.tasks.InsertOne(ctx, dbTask{
-		Owner:    bsonOwnerId,
-		Assignee: assignee,
-		Summary:  &summary,
-	})
+	task := dbTask{
+		OwnerId:     bsonActorId,
+		Summary:     summary,
+		Description: *description,
+	}
+	if assigneeId != nil {
+		task.AssigneeId = bsonAssigneeId
+	}
+
+	result, err := db.tasks.InsertOne(ctx, task)
 	if err != nil {
 		return "", fmt.Errorf("insert one: %w", err)
 	}

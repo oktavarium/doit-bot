@@ -8,16 +8,13 @@ import (
 )
 
 func (h *Handlers) CreateTask(c *gin.Context) {
-	initData, ok := common.CtxInitData(c)
+	actorId, ok := common.ActorIdFromContext(c)
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, map[string]any{
-			"message": "Init data not found",
-		})
+		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
 	var request createTaskRequest
-	owner := initData.User.ID
 	if err := c.BindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -30,9 +27,9 @@ func (h *Handlers) CreateTask(c *gin.Context) {
 
 	taskID, err := h.model.CreateTask(
 		c,
-		owner,
-		request.Assignee,
-		request.List,
+		actorId,
+		request.AssigneeId,
+		request.ListId,
 		request.Summary,
 		request.Description,
 	)

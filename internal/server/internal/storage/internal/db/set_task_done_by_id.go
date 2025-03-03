@@ -9,16 +9,21 @@ import (
 )
 
 func (db *storage) SetTaskDoneById(ctx context.Context,
-	owner int64,
-	id string,
+	actorId string,
+	taskId string,
 	done bool,
 ) error {
-	bsonId, err := primitive.ObjectIDFromHex(id)
+	bsonActorId, err := primitive.ObjectIDFromHex(actorId)
 	if err != nil {
 		return fmt.Errorf("invalid id: %w", err)
 	}
 
-	filter := bson.D{{"_id", bsonId}, {"owner", owner}}
+	bsonTaskId, err := primitive.ObjectIDFromHex(taskId)
+	if err != nil {
+		return fmt.Errorf("invalid id: %w", err)
+	}
+
+	filter := bson.D{{"_id", bsonTaskId}, {"owner", bsonActorId}}
 	updatePayload := bson.D{}
 	updatePayload = append(updatePayload, bson.E{"done", done})
 

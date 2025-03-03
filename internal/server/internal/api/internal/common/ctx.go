@@ -9,16 +9,24 @@ import (
 type contextKey string
 
 const (
-	_initDataKey contextKey = "init-data"
+	initDataKey contextKey = "init-data"
+	actorIdKey  contextKey = "actor-id"
 )
 
-// Returns new context with specified init data.
-func WithInitData(ctx context.Context, initData initdata.InitData) context.Context {
-	return context.WithValue(ctx, _initDataKey, initData)
+func InitDataToContext(ctx context.Context, initData initdata.InitData) context.Context {
+	return context.WithValue(ctx, initDataKey, initData)
 }
 
-// Returns the init data from the specified context.
-func CtxInitData(ctx context.Context) (initdata.InitData, bool) {
-	initData, ok := ctx.Value(_initDataKey).(initdata.InitData)
+func InitDataFromContext(ctx context.Context) (initdata.InitData, bool) {
+	initData, ok := ctx.Value(initDataKey).(initdata.InitData)
+	return initData, ok
+}
+
+func ActorIdToContext(ctx context.Context, id string) context.Context {
+	return context.WithValue(ctx, actorIdKey, id)
+}
+
+func ActorIdFromContext(ctx context.Context) (string, bool) {
+	initData, ok := ctx.Value(actorIdKey).(string)
 	return initData, ok
 }

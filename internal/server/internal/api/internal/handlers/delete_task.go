@@ -8,16 +8,13 @@ import (
 )
 
 func (h *Handlers) DeleteTaskById(c *gin.Context) {
-	initData, ok := common.CtxInitData(c)
+	actorId, ok := common.ActorIdFromContext(c)
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, map[string]any{
-			"message": "Init data not found",
-		})
+		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
 	var request deleteTaskByIdRequest
-	owner := initData.User.ID
 	if err := c.BindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -30,7 +27,7 @@ func (h *Handlers) DeleteTaskById(c *gin.Context) {
 
 	if err := h.model.DeleteTaskById(
 		c,
-		owner,
+		actorId,
 		request.Id,
 	); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

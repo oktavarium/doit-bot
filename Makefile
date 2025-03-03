@@ -1,7 +1,7 @@
 build: build.front build.back
 
 build.back:
-	go build  -o ./bin/server ./cmd/main
+	go build  -o ./bin/server ./cmd/server
 
 build.front:
 	npm --prefix ./web/client install

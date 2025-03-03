@@ -25,7 +25,7 @@ func New(router *gin.Engine, token string, model *model.Model) *Handlers {
 }
 
 func (h *Handlers) init() {
-	apiGroup := h.router.Group("/api", auth.Middleware(h.token))
+	apiGroup := h.router.Group("/api", auth.Middleware(h.token, h.model))
 	apiGroup.POST("/create_task", h.CreateTask)
 	apiGroup.POST("/delete_task", h.DeleteTaskById)
 	apiGroup.POST("/update_task", h.UpdateTaskById)

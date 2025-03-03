@@ -1,3 +1,7 @@
 package common
 
-const HeaderAuthorization = "Authorization"
+const (
+	HeaderAuthorization = "Authorization"
+	AuthTypeTelegram    = "tma"
+	AuthTypeDebug       = "dbg"
+)
