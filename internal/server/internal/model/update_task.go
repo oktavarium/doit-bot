@@ -4,7 +4,7 @@ import (
 	"context"
 )
 
-func (m *Model) UpdateTask(
+func (m *Model) UpdateTaskById(
 	ctx context.Context,
 	owner int64,
 	id string,
@@ -12,5 +12,5 @@ func (m *Model) UpdateTask(
 	summary *string,
 	done *bool,
 ) error {
-	return m.storage.UpdateTask(ctx, owner, id, assignee, summary, done)
+	return m.storage.UpdateTaskById(ctx, owner, id, assignee, summary, done)
 }

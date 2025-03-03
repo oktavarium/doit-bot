@@ -31,8 +31,10 @@ func (h *Handlers) CreateTask(c *gin.Context) {
 	taskID, err := h.model.CreateTask(
 		c,
 		owner,
-		request.Summary,
 		request.Assignee,
+		request.List,
+		request.Summary,
+		request.Description,
 	)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

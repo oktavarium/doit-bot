@@ -6,3 +6,6 @@ build.back:
 build.front:
 	npm --prefix ./web/client install
 	npm --prefix ./web/client run build
+
+lint:
+	go run ./cmd/staticlint ./...

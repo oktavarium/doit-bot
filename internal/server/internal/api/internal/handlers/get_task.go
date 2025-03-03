@@ -6,13 +6,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h *Handlers) GetTask(c *gin.Context) {
-	var request getTaskRequest
+func (h *Handlers) GetTaskById(c *gin.Context) {
+	var request getTaskByIdRequest
 	if err := c.BindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	task, err := h.model.GetTask(
+
+	if err := validateGetTaskByIdRequest(request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	task, err := h.model.GetTaskById(
 		c,
 		request.Id,
 	)

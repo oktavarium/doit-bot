@@ -3,33 +3,42 @@ package handlers
 import "github.com/oktavarium/doit-bot/internal/server/internal/dto"
 
 type createTaskRequest struct {
-	Assignee *int64 `json:"assignee,omitempty"`
-	Summary  string `json:"summary,omitempty"`
+	Assignee    *string `json:"assignee_id,omitempty" validation:"omitnil,required,lte=32"`
+	List        *string `json:"list_id,omitempty" validation:"omitnil,required,lte=32"`
+	Summary     string  `json:"summary,omitempty" validation:"omitnil,required,lte=32"`
+	Description *string `json:"description,omitempty" validation:"omitnil,required,lte=256"`
 }
 
 type createTaskResponse struct {
-	Id string `json:"id"`
+	Id string `json:"id" validation:"required"`
 }
 
-type deleteTaskRequest struct {
-	Id string `json:"id,omitempty"`
+type deleteTaskByIdRequest struct {
+	Id string `json:"id" validation:"required"`
 }
 
-type getTaskRequest struct {
-	Id string `json:"id,omitempty"`
+type getTaskByIdRequest struct {
+	Id string `json:"id" validation:"required"`
 }
 
 type getTaskResponse struct {
 	*dto.Task
 }
 
-type getTasksResponse struct {
+type getTasksByOwnerResponse struct {
 	Tasks []*dto.Task `json:"tasks"`
 }
 
-type updateTaskRequest struct {
-	Id       string  `json:"id,omitempty"`
-	Assignee *int64  `json:"assignee,omitempty"`
-	Summary  *string `json:"summary,omitempty"`
-	Done     *bool   `json:"done,omitempty"`
+type updateTaskByIdRequest struct {
+	Id          string  `json:"id" validation:"required"`
+	Assignee    *string `json:"assignee_id,omitempty" validation:"omitnil,required,lte=32"`
+	List        *string `json:"list_id,omitempty" validation:"omitnil,required,lte=32"`
+	Summary     *string `json:"summary,omitempty" validation:"omitnil,required,lte=32"`
+	Description *string `json:"description,omitempty" validation:"omitnil,required,lte=256"`
+	Done        *bool   `json:"done,omitempty" validation:"omitnil"`
+}
+
+type setTaskDoneByIdRequest struct {
+	Id   string `json:"id" validation:"required"`
+	Done bool   `json:"done" validation:"required"`
 }

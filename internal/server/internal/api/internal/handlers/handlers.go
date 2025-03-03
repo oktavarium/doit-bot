@@ -27,8 +27,8 @@ func New(router *gin.Engine, token string, model *model.Model) *Handlers {
 func (h *Handlers) init() {
 	apiGroup := h.router.Group("/api", auth.Middleware(h.token))
 	apiGroup.POST("/create_task", h.CreateTask)
-	apiGroup.POST("/delete_task", h.DeleteTask)
-	apiGroup.POST("/update_task", h.UpdateTask)
-	apiGroup.POST("/get_tasks", h.GetTasks)
-	apiGroup.POST("/get_task", h.GetTask)
+	apiGroup.POST("/delete_task", h.DeleteTaskById)
+	apiGroup.POST("/update_task", h.UpdateTaskById)
+	apiGroup.POST("/get_tasks", h.GetTasksByOwner)
+	apiGroup.POST("/get_task", h.GetTaskById)
 }

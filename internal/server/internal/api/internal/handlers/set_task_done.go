@@ -7,7 +7,7 @@ import (
 	"github.com/oktavarium/doit-bot/internal/server/internal/api/internal/common"
 )
 
-func (h *Handlers) UpdateTaskById(c *gin.Context) {
+func (h *Handlers) SetTaskDoneById(c *gin.Context) {
 	initData, ok := common.CtxInitData(c)
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, map[string]any{
@@ -16,24 +16,22 @@ func (h *Handlers) UpdateTaskById(c *gin.Context) {
 		return
 	}
 
-	var request updateTaskByIdRequest
+	var request setTaskDoneByIdRequest
 	owner := initData.User.ID
 	if err := c.BindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if err := validateUpdateTaskByIdRequest(request); err != nil {
+	if err := validateSetTaskDoneByIdRequest(request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if err := h.model.UpdateTaskById(
+	if err := h.model.SetTaskDoneById(
 		c,
 		owner,
 		request.Id,
-		request.Assignee,
-		request.Summary,
 		request.Done,
 	); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

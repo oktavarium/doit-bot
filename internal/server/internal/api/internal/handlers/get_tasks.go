@@ -7,7 +7,7 @@ import (
 	"github.com/oktavarium/doit-bot/internal/server/internal/api/internal/common"
 )
 
-func (h *Handlers) GetTasks(c *gin.Context) {
+func (h *Handlers) GetTasksByOwner(c *gin.Context) {
 	initData, ok := common.CtxInitData(c)
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, map[string]any{
@@ -16,11 +16,11 @@ func (h *Handlers) GetTasks(c *gin.Context) {
 		return
 	}
 
-	tasks, err := h.model.GetTasks(c, initData.User.ID)
+	tasks, err := h.model.GetTasksByOwner(c, initData.User.ID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, getTasksResponse{tasks})
+	c.JSON(http.StatusOK, getTasksByOwnerResponse{tasks})
 }
