@@ -6,6 +6,7 @@ toolchain go1.24.0
 
 require (
 	github.com/JGLTechnologies/gin-rate-limit v1.5.4
+	github.com/coreos/go-semver v0.3.1
 	github.com/gin-contrib/size v1.0.1
 	github.com/gin-contrib/static v1.1.3
 	github.com/gin-gonic/gin v1.10.0

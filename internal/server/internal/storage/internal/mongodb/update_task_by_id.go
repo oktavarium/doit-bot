@@ -43,25 +43,25 @@ func (db *db) UpdateTaskById(ctx context.Context,
 		}
 	}
 
-	filter := bson.D{{"_id", bsonTaskId}, {"owner", bsonActorId}}
-	updatePayload := bson.D{}
+	filter := bson.M{"_id": bsonTaskId, "owner": bsonActorId}
+	updatePayload := bson.M{}
 	if assigneeId != nil {
-		updatePayload = append(updatePayload, bson.E{"assignee", bsonAssigneeId})
+		updatePayload["assignee"] = bsonAssigneeId
 	}
 	if listId != nil {
-		updatePayload = append(updatePayload, bson.E{"list_id", bsonListId})
+		updatePayload["list_id"] = bsonListId
 	}
 	if summary != nil {
-		updatePayload = append(updatePayload, bson.E{"summary", summary})
+		updatePayload["summary"] = summary
 	}
 	if description != nil {
-		updatePayload = append(updatePayload, bson.E{"description", description})
+		updatePayload["description"] = description
 	}
 	if done != nil {
-		updatePayload = append(updatePayload, bson.E{"done", done})
+		updatePayload["done"] = done
 	}
 
-	update := bson.D{{"$set", updatePayload}}
+	update := bson.M{"$set": updatePayload}
 
 	_, err = db.tasks.UpdateOne(ctx, filter, update)
 	if err != nil {

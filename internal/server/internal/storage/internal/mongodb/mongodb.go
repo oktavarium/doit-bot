@@ -4,12 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/oktavarium/doit-bot/internal/server/internal/storage/internal/mongodb/migrations"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-)
-
-const (
-	collection = "надо выделить коллекции и для каждой из них свои методы?"
 )
 
 type db struct {
@@ -30,6 +27,10 @@ func New(uri string) (*db, error) {
 	}
 
 	database := client.Database(database)
+	if err := migrations.Run(ctx, database); err != nil {
+		return nil, fmt.Errorf("run migrations: %w", err)
+	}
+
 	return &db{
 		client: client,
 		users:  database.Collection(usersCollection),

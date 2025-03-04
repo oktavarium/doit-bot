@@ -1,5 +1,7 @@
 package dbo
 
+import "go.mongodb.org/mongo-driver/bson/primitive"
+
 func stringFromPointer(s *string) string {
 	if s == nil {
 		return ""
@@ -18,4 +20,12 @@ func boolFromPointer(b *bool) bool {
 	}
 
 	return *b
+}
+
+func objectIDsToString(ids []primitive.ObjectID) []string {
+	result := make([]string, 0, len(ids))
+	for _, id := range ids {
+		result = append(result, id.Hex())
+	}
+	return result
 }

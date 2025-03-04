@@ -20,9 +20,9 @@ func (db *db) CreateGroup(
 	}
 
 	group := dbo.Group{
-		TgId:    chat_tg_id,
-		OwnerId: bsonActorId,
-		Name:    name,
+		TgId:  chat_tg_id,
+		Users: []primitive.ObjectID{bsonActorId},
+		Name:  name,
 	}
 
 	result, err := db.groups.InsertOne(ctx, group)

@@ -1,10 +1,10 @@
 package dto
 
 type Group struct {
-	Id      string `json:"id"`
-	TgId    int64  `json:"tg_id,omitempty"`
-	OwnerId string `json:"owner_id"`
-	Name    string `json:"name"`
+	Id    string   `json:"id"`
+	TgId  int64    `json:"tg_id,omitempty"`
+	Users []string `json:"users,omitempty"`
+	Name  string   `json:"name"`
 }
 
 type List struct {

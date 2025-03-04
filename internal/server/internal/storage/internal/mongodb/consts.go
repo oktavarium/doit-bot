@@ -5,8 +5,9 @@ const (
 )
 
 const (
-	usersCollection  = "users"
-	listsCollection  = "lists"
-	tasksCollection  = "tasks"
-	groupsCollection = "groups"
+	usersCollection      = "users"
+	listsCollection      = "lists"
+	tasksCollection      = "tasks"
+	groupsCollection     = "groups"
+	migrationsCollection = "migrations"
 )

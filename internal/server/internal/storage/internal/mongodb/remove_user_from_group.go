@@ -8,25 +8,24 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (db *db) UpdateGroupById(
+func (db *db) RemoveUserFromGroup(
 	ctx context.Context,
-	actorId string,
-	chatId string,
-	name string,
+	userId string,
+	groupId string,
 ) error {
-	bsonUserId, err := primitive.ObjectIDFromHex(actorId)
+	bsonUserId, err := primitive.ObjectIDFromHex(userId)
 	if err != nil {
 		return fmt.Errorf("invalid id: %w", err)
 	}
 
-	bsonGroupId, err := primitive.ObjectIDFromHex(chatId)
+	bsonGroupId, err := primitive.ObjectIDFromHex(groupId)
 	if err != nil {
 		return fmt.Errorf("invalid id: %w", err)
 	}
 
 	filter := bson.M{"_id": bsonGroupId}
-	update := bson.M{"$set": bson.M{"name": name}, "$addToSet": bson.M{"users": bsonUserId}}
-	_, err = db.users.UpdateOne(ctx, filter, update)
+	update := bson.M{"$pull": bson.M{"users": bsonUserId}}
+	_, err = db.groups.UpdateOne(ctx, filter, update)
 	if err != nil {
 		return fmt.Errorf("update one: %w", err)
 	}

@@ -23,11 +23,8 @@ func (db *db) SetTaskDoneById(ctx context.Context,
 		return fmt.Errorf("invalid id: %w", err)
 	}
 
-	filter := bson.D{{"_id", bsonTaskId}, {"owner", bsonActorId}}
-	updatePayload := bson.D{}
-	updatePayload = append(updatePayload, bson.E{"done", done})
-
-	update := bson.D{{"$set", updatePayload}}
+	filter := bson.M{"_id": bsonTaskId, "owner": bsonActorId}
+	update := bson.M{"$set": bson.M{"done": done}}
 
 	_, err = db.tasks.UpdateOne(ctx, filter, update)
 	if err != nil {
