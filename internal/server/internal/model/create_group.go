@@ -40,5 +40,10 @@ func (m *Model) CreateGroup(
 		return fmt.Errorf("update user by id: %w", err)
 	}
 
+	// Should me anothe place i think
+	if err := m.SendStartupButton(ctx, chat_tg_id, actor_tg_id, ""); err != nil {
+		return fmt.Errorf("send button: %w", err)
+	}
+
 	return nil
 }

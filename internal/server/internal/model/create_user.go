@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
 
 	"github.com/oktavarium/doit-bot/internal/doiterr"
 )
@@ -31,6 +32,11 @@ func (m *Model) CreateUser(
 
 	if err := m.storage.UpdateUserById(ctx, user.Id, actor_tg_id, chat_tg_id, firstName, lastName, username); err != nil {
 		return fmt.Errorf("update user by id: %w", err)
+	}
+
+	// For Test - should be in another place
+	if err := m.tgclient.SendMessage(ctx, "Hello, user... this is your tg_id... "+strconv.FormatInt(actor_tg_id, 10), chat_tg_id); err != nil {
+		return fmt.Errorf("send message to user: %w", err)
 	}
 
 	return nil

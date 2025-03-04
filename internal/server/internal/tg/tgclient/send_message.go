@@ -6,37 +6,23 @@ import (
 	"log/slog"
 
 	"github.com/go-telegram/bot"
-	"github.com/go-telegram/bot/models"
 	"github.com/oktavarium/doit-bot/internal/doiterr"
 )
 
-func (api *TGClient) SendStartupButton(
+func (api *TGClient) SendMessage(
 	ctx context.Context,
-	buttonText string,
 	messageText string,
 	chatID int64,
 ) error {
-	if buttonText == "" || messageText == "" {
+	if messageText == "" {
 		return doiterr.ErrEmptyParameters
-	}
-
-	kb := &models.InlineKeyboardMarkup{
-		InlineKeyboard: [][]models.InlineKeyboardButton{
-			{
-				{
-					Text: buttonText,
-					URL:  "https://t.me/" + api.botName + "?startapp=inline",
-				},
-			},
-		},
 	}
 
 	_, err := api.bot.SendMessage(
 		ctx,
 		&bot.SendMessageParams{
-			ChatID:      chatID,
-			Text:        messageText,
-			ReplyMarkup: kb,
+			ChatID: chatID,
+			Text:   messageText,
 		},
 	)
 

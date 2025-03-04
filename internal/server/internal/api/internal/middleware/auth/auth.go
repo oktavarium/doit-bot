@@ -3,6 +3,7 @@ package auth
 import (
 	"errors"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -29,6 +30,32 @@ func Middleware(token string, m *model.Model) gin.HandlerFunc {
 		authType := authParts[0]
 		authData := authParts[1]
 		switch authType {
+		case common.AuthTypeDebug:
+			userTgId, err := strconv.Atoi(authData)
+			if err != nil {
+				c.AbortWithStatusJSON(http.StatusEarlyHints, gin.H{
+					"message": "Send me good debug auth header id you use dbg. For example: dbg 11223344",
+				})
+				return
+			}
+
+			userId, err := m.GetUserIdByTgId(c, int64(userTgId))
+			if err != nil && !errors.Is(err, doiterr.ErrNotFound) {
+				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+					"message": err.Error(),
+				})
+				return
+			}
+
+			if errors.Is(err, doiterr.ErrNotFound) {
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+					"message": err.Error(),
+				})
+				return
+			}
+
+			ctx := common.ActorIdToContext(c.Request.Context(), userId)
+			c.Request = c.Request.WithContext(ctx)
 		case common.AuthTypeTelegram:
 			// Validate init data. We consider init data sign valid for 1 hour from their
 			// creation moment.
