@@ -1,4 +1,4 @@
-package db
+package mongodb
 
 import (
 	"context"
@@ -12,7 +12,7 @@ const (
 	collection = "надо выделить коллекции и для каждой из них свои методы?"
 )
 
-type storage struct {
+type db struct {
 	client *mongo.Client
 	users  *mongo.Collection
 	groups *mongo.Collection
@@ -20,7 +20,7 @@ type storage struct {
 	lists  *mongo.Collection
 }
 
-func New(uri string) (*storage, error) {
+func New(uri string) (*db, error) {
 	clientOpts := options.Client().ApplyURI(uri)
 
 	ctx := context.Background()
@@ -29,12 +29,12 @@ func New(uri string) (*storage, error) {
 		return nil, fmt.Errorf("new mongo client: %w", err)
 	}
 
-	db := client.Database(database)
-	return &storage{
+	database := client.Database(database)
+	return &db{
 		client: client,
-		users:  db.Collection(usersCollection),
-		groups: db.Collection(groupsCollection),
-		tasks:  db.Collection(tasksCollection),
-		lists:  db.Collection(listsCollection),
+		users:  database.Collection(usersCollection),
+		groups: database.Collection(groupsCollection),
+		tasks:  database.Collection(tasksCollection),
+		lists:  database.Collection(listsCollection),
 	}, nil
 }

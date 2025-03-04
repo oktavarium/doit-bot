@@ -1,4 +1,4 @@
-package db
+package mongodb
 
 import (
 	"context"
@@ -8,10 +8,11 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (db *storage) UpdateTaskById(ctx context.Context,
+func (db *db) UpdateTaskById(ctx context.Context,
 	actorId string,
 	taskId string,
 	assigneeId *string,
+	listId *string,
 	summary *string,
 	description *string,
 	done *bool,
@@ -34,10 +35,21 @@ func (db *storage) UpdateTaskById(ctx context.Context,
 		}
 	}
 
+	var bsonListId primitive.ObjectID
+	if listId != nil {
+		bsonListId, err = primitive.ObjectIDFromHex(*listId)
+		if err != nil {
+			return fmt.Errorf("invalid id: %w", err)
+		}
+	}
+
 	filter := bson.D{{"_id", bsonTaskId}, {"owner", bsonActorId}}
 	updatePayload := bson.D{}
 	if assigneeId != nil {
 		updatePayload = append(updatePayload, bson.E{"assignee", bsonAssigneeId})
+	}
+	if listId != nil {
+		updatePayload = append(updatePayload, bson.E{"list_id", bsonListId})
 	}
 	if summary != nil {
 		updatePayload = append(updatePayload, bson.E{"summary", summary})

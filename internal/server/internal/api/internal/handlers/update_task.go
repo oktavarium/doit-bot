@@ -30,6 +30,7 @@ func (h *Handlers) UpdateTaskById(c *gin.Context) {
 		actorId,
 		request.Id,
 		request.AssigneeId,
+		request.ListId,
 		request.Summary,
 		request.Description,
 		request.Done,

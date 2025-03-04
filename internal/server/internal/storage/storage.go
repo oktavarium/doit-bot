@@ -1,7 +1,7 @@
 package storage
 
-import "github.com/oktavarium/doit-bot/internal/server/internal/storage/internal/db"
+import "github.com/oktavarium/doit-bot/internal/server/internal/storage/internal/mongodb"
 
 func New(uri string) (Storage, error) {
-	return db.New(uri)
+	return mongodb.New(uri)
 }

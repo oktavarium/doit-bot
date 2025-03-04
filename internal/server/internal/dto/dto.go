@@ -1,19 +1,17 @@
 package dto
 
 type Group struct {
-	Id          string `json:"id"`
-	TgId        int64  `json:"tg_id,omitempty"`
-	OwnerId     string `json:"owner_id"`
-	GroupId     string `json:"last_name"`
-	Summary     string `json:"summary,omitempty"`
-	Description string `json:"description,omitempty"`
+	Id      string `json:"id"`
+	TgId    int64  `json:"tg_id,omitempty"`
+	OwnerId string `json:"owner_id"`
+	Name    string `json:"name"`
 }
 
 type List struct {
 	Id          string `json:"id"`
 	OwnerId     string `json:"owner_id"`
 	GroupId     string `json:"group_id"`
-	Summary     string `json:"summary,omitempty"`
+	Name        string `json:"summary,omitempty"`
 	Description string `json:"description,omitempty"`
 }
 

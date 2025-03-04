@@ -1,4 +1,4 @@
-package db
+package mongodb
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (db *storage) DeleteTaskById(ctx context.Context, actorId string, taskId string) error {
+func (db *db) DeleteTaskById(ctx context.Context, actorId string, taskId string) error {
 	bsonActorId, err := primitive.ObjectIDFromHex(actorId)
 	if err != nil {
 		return fmt.Errorf("invalid id: %w", err)

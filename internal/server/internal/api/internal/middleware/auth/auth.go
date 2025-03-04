@@ -1,11 +1,13 @@
 package auth
 
 import (
+	"errors"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/oktavarium/doit-bot/internal/doiterr"
 	"github.com/oktavarium/doit-bot/internal/server/internal/api/internal/common"
 	"github.com/oktavarium/doit-bot/internal/server/internal/model"
 	initdata "github.com/telegram-mini-apps/init-data-golang"
@@ -47,8 +49,15 @@ func Middleware(token string, m *model.Model) gin.HandlerFunc {
 			}
 
 			userId, err := m.GetUserIdByTgId(c, initData.User.ID)
-			if err != nil {
+			if err != nil && !errors.Is(err, doiterr.ErrNotFound) {
 				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+					"message": err.Error(),
+				})
+				return
+			}
+
+			if errors.Is(err, doiterr.ErrNotFound) {
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 					"message": err.Error(),
 				})
 				return

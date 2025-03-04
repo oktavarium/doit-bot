@@ -1,19 +1,20 @@
-package db
+package mongodb
 
 import (
 	"context"
 	"fmt"
 
+	"github.com/oktavarium/doit-bot/internal/server/internal/storage/internal/mongodb/dbo"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (db *storage) CreateTask(
+func (db *db) CreateTask(
 	ctx context.Context,
 	actorId string,
 	assigneeId *string,
 	listId *string,
 	summary string,
-	description *string,
+	description string,
 ) (string, error) {
 	bsonActorId, err := primitive.ObjectIDFromHex(actorId)
 	if err != nil {
@@ -28,10 +29,10 @@ func (db *storage) CreateTask(
 		}
 	}
 
-	task := dbTask{
+	task := dbo.Task{
 		OwnerId:     bsonActorId,
 		Summary:     summary,
-		Description: *description,
+		Description: description,
 	}
 	if assigneeId != nil {
 		task.AssigneeId = bsonAssigneeId

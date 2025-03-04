@@ -10,7 +10,7 @@ func (m *Model) CreateTask(
 	assigneeId *string,
 	listId *string,
 	summary string,
-	description *string,
+	description string,
 ) (string, error) {
 	return m.storage.CreateTask(ctx, actorId, assigneeId, listId, summary, description)
 }

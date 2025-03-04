@@ -1,15 +1,16 @@
-package db
+package mongodb
 
 import (
 	"context"
 	"fmt"
 
 	"github.com/oktavarium/doit-bot/internal/server/internal/dto"
+	"github.com/oktavarium/doit-bot/internal/server/internal/storage/internal/mongodb/dbo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (db *storage) GetTasksByOwner(ctx context.Context, actorId string) ([]*dto.Task, error) {
+func (db *db) GetTasksByOwner(ctx context.Context, actorId string) ([]*dto.Task, error) {
 	bsonActorId, err := primitive.ObjectIDFromHex(actorId)
 	if err != nil {
 		return nil, fmt.Errorf("invalid id: %w", err)
@@ -20,14 +21,14 @@ func (db *storage) GetTasksByOwner(ctx context.Context, actorId string) ([]*dto.
 		return nil, fmt.Errorf("find tasks: %w", err)
 	}
 
-	var tasks []dbTask
+	var tasks []dbo.Task
 	if err := cursor.All(ctx, &tasks); err != nil {
 		return nil, fmt.Errorf("read cursor: %w", err)
 	}
 
 	result := make([]*dto.Task, 0, len(tasks))
 	for _, task := range tasks {
-		result = append(result, dbTaskToDTOTask(task))
+		result = append(result, task.ToDTOTask())
 	}
 
 	return result, nil

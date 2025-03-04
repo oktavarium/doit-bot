@@ -5,8 +5,8 @@ import "github.com/oktavarium/doit-bot/internal/server/internal/dto"
 type createTaskRequest struct {
 	AssigneeId  *string `json:"assignee_id,omitempty" validation:"omitnil,required,lte=32"`
 	ListId      *string `json:"list_id,omitempty" validation:"omitnil,required,lte=32"`
-	Summary     string  `json:"summary,omitempty" validation:"omitnil,required,lte=32"`
-	Description *string `json:"description,omitempty" validation:"omitnil,required,lte=256"`
+	Summary     string  `json:"summary,omitempty" validation:"omitempty,required,lte=32"`
+	Description string  `json:"description,omitempty" validation:"omitempty,required,lte=256"`
 }
 
 type createTaskResponse struct {

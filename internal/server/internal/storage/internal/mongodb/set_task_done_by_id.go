@@ -1,4 +1,4 @@
-package db
+package mongodb
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (db *storage) SetTaskDoneById(ctx context.Context,
+func (db *db) SetTaskDoneById(ctx context.Context,
 	actorId string,
 	taskId string,
 	done bool,
