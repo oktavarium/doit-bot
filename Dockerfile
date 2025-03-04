@@ -14,7 +14,7 @@ COPY cmd/ /cmd
 COPY internal/ /internal
 COPY web/ /web
 COPY --from=front_builder /build/ /web/client/build
-RUN go build -ldflags="-s -w" -o /bin/server /cmd/main
+RUN go build -ldflags="-s -w" -o /bin/server /cmd/server
 
 FROM alpine
 WORKDIR /bin

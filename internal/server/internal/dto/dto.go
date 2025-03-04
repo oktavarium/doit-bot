@@ -20,15 +20,16 @@ type Task struct {
 	OwnerId     string `json:"owner_id"`
 	AssigneeId  string `json:"assignee_id,omitempty"`
 	ListId      string `json:"list_id,omitempty"`
-	Summary     string `json:"summary"`
-	Description string `json:"description"`
+	Summary     string `json:"summary,omitempty"`
+	Description string `json:"description,omitempty"`
 	Done        bool   `json:"done"`
 }
 
 type User struct {
-	Id        string `json:"id"`
-	TgId      int64  `json:"tg_id"`
-	FirstName string `json:"first_name,omitempty"`
-	LastName  string `json:"last_name,omitempty"`
-	Username  string `json:"username,omitempty"`
+	Id        string   `json:"id"`
+	TgId      int64    `json:"tg_id"`
+	Groups    []string `json:"groups,omitempty"`
+	FirstName string   `json:"first_name,omitempty"`
+	LastName  string   `json:"last_name,omitempty"`
+	Username  string   `json:"username,omitempty"`
 }
