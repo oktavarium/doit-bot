@@ -23,7 +23,7 @@ func (db *db) SetTaskDoneById(ctx context.Context,
 		return fmt.Errorf("invalid id: %w", err)
 	}
 
-	filter := bson.M{"_id": bsonTaskId, "owner": bsonActorId}
+	filter := bson.M{"_id": bsonTaskId, "owner_id": bsonActorId}
 	update := bson.M{"$set": bson.M{"done": done}}
 
 	_, err = db.tasks.UpdateOne(ctx, filter, update)

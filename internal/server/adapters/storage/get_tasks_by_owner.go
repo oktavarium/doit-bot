@@ -16,7 +16,7 @@ func (db *db) GetTasksByOwner(ctx context.Context, actorId string) ([]*dto.Task,
 		return nil, fmt.Errorf("invalid id: %w", err)
 	}
 
-	cursor, err := db.tasks.Find(ctx, bson.M{"owner": bsonActorId})
+	cursor, err := db.tasks.Find(ctx, bson.M{"owner_id": bsonActorId})
 	if err != nil {
 		return nil, fmt.Errorf("find tasks: %w", err)
 	}

@@ -25,7 +25,7 @@ func (db *db) DeleteTaskById(ctx context.Context, actorId string, taskId string)
 			Value: bsonTaskId,
 		},
 		{
-			Key:   "owner",
+			Key:   "owner_id",
 			Value: bsonActorId,
 		},
 	}

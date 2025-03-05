@@ -43,7 +43,7 @@ func (db *db) UpdateTaskById(ctx context.Context,
 		}
 	}
 
-	filter := bson.M{"_id": bsonTaskId, "owner": bsonActorId}
+	filter := bson.M{"_id": bsonTaskId, "owner_id": bsonActorId}
 	updatePayload := bson.M{}
 	if assigneeId != nil {
 		updatePayload["assignee"] = bsonAssigneeId
