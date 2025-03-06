@@ -13,7 +13,7 @@ func (db *db) UpdateTaskById(ctx context.Context,
 	taskId string,
 	assigneeId *string,
 	listId *string,
-	summary *string,
+	name *string,
 	description *string,
 	done *bool,
 ) error {
@@ -46,13 +46,13 @@ func (db *db) UpdateTaskById(ctx context.Context,
 	filter := bson.M{"_id": bsonTaskId, "owner_id": bsonActorId}
 	updatePayload := bson.M{}
 	if assigneeId != nil {
-		updatePayload["assignee"] = bsonAssigneeId
+		updatePayload["assignee_id"] = bsonAssigneeId
 	}
 	if listId != nil {
 		updatePayload["list_id"] = bsonListId
 	}
-	if summary != nil {
-		updatePayload["summary"] = summary
+	if name != nil {
+		updatePayload["name"] = name
 	}
 	if description != nil {
 		updatePayload["description"] = description

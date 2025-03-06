@@ -20,11 +20,6 @@ func (h *Handlers) SetTaskDoneById(c *gin.Context) {
 		return
 	}
 
-	if err := validateSetTaskDoneByIdRequest(request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
 	if err := h.model.SetTaskDoneById(
 		c,
 		actorId,

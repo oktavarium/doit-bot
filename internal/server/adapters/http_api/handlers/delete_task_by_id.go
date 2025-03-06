@@ -20,11 +20,6 @@ func (h *Handlers) DeleteTaskById(c *gin.Context) {
 		return
 	}
 
-	if err := validateDeleteTaskByIdRequest(request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
 	if err := h.model.DeleteTaskById(
 		c,
 		actorId,
