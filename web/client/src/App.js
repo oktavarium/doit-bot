@@ -5,8 +5,6 @@ import DataTable from './components/DataTable';
 import BasicButton from './components/BasicButton';
 import { retrieveRawInitData } from '@telegram-apps/sdk';
 import { Button, Paper } from '@mui/material';
-import vanHeader from './assets/images/vanHeader.png';
-
 // Отключаем WebSocket для production
 if (process.env.NODE_ENV === 'production') {
   window.addEventListener('error', (event) => {
@@ -176,16 +174,6 @@ function App() {
             width: '100%',
             position: 'relative'
           }}>
-            <img 
-              src={vanHeader} 
-              alt="Van Header" 
-              className="rotating-image"
-              style={{ 
-                height: '40px',
-                width: 'auto',
-                objectFit: 'contain'
-              }} 
-            />
             <p style={{ 
               margin: 0,
               position: 'absolute',
@@ -193,7 +181,7 @@ function App() {
               transform: 'translateX(-50%)',
               width: 'auto',
               color: '#ffffff'
-            }}>вэнский хедер</p>
+            }}></p>
           </div>
         </header>
 

@@ -51,20 +51,3 @@ body {
   align-items: center;
   background-color: #ffffff;
 }
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.rotating-image {
-  animation: spin 10s linear infinite;
-}
-/* 
-.rotating-image:hover {
-  animation: spin 3s linear infinite;
-} */
