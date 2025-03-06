@@ -48,7 +48,7 @@ type getTaskByIdResponse struct {
 }
 
 type getListsByGroupIdRequest struct {
-	GroupId string `json:"group_id" validation:"required"`
+	Id string `json:"id" validation:"required"`
 }
 
 type getListsByGroupIdResponse struct {

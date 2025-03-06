@@ -23,7 +23,7 @@ func (h *Handlers) GetListsByGroupId(c *gin.Context) {
 	task, err := h.model.GetListsByGroupId(
 		c,
 		actorId,
-		request.GroupId,
+		request.Id,
 	)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
