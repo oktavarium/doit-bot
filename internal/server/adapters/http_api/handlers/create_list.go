@@ -32,5 +32,5 @@ func (h *Handlers) CreateList(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, createGroupResponse{Id: groupId})
+	c.JSON(http.StatusOK, createListResponse{Id: groupId})
 }
