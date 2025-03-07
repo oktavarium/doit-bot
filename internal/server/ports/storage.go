@@ -77,6 +77,7 @@ type Storage interface {
 	) error
 	GetTaskById(ctx context.Context, taskId string) (*dto.Task, error)
 	GetTasksByOwner(ctx context.Context, actorId string) ([]*dto.Task, error)
+	GetTasks(ctx context.Context, actorId string) ([]*dto.Task, error)
 	GetGroups(ctx context.Context, actorId string) ([]*dto.Group, error)
 	GetUserByTgId(ctx context.Context, tg_id int64) (*dto.User, error)
 	GetGroupByTgId(ctx context.Context, tg_id int64) (*dto.Group, error)

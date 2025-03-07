@@ -10,13 +10,13 @@ import (
 func (h *Handlers) CreateTask(c *gin.Context) {
 	actorId, ok := common.ActorIdFromContext(c)
 	if !ok {
-		c.JSON(http.StatusInternalServerError, newStatusResponse(http.StatusInternalServerError, ""))
+		c.JSON(http.StatusInternalServerError, common.NewStatusResponse(http.StatusInternalServerError, ""))
 		return
 	}
 
 	var request createTaskRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, newStatusResponse(http.StatusBadRequest, err.Error()))
+		c.JSON(http.StatusBadRequest, common.NewStatusResponse(http.StatusBadRequest, err.Error()))
 		return
 	}
 
@@ -29,9 +29,9 @@ func (h *Handlers) CreateTask(c *gin.Context) {
 		request.Description,
 	)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, newStatusResponse(http.StatusInternalServerError, err.Error()))
+		c.JSON(http.StatusInternalServerError, common.NewStatusResponse(http.StatusInternalServerError, err.Error()))
 		return
 	}
 
-	c.JSON(http.StatusOK, createTaskResponse{Id: taskID, Status: status{Code: http.StatusOK}})
+	c.JSON(http.StatusOK, createTaskResponse{Id: taskID, Status: common.Status{Code: http.StatusOK}})
 }

@@ -19,7 +19,6 @@ func (db *db) CreateGroup(
 	}
 
 	group := dbo.Group{
-		Users: []primitive.ObjectID{bsonActorId},
 		Name:  name,
 		Type:  dbo.WithoutChat,
 	}
@@ -29,10 +28,19 @@ func (db *db) CreateGroup(
 		return "", fmt.Errorf("insert one: %w", err)
 	}
 
-	id, ok := result.InsertedID.(primitive.ObjectID)
+	groupId, ok := result.InsertedID.(primitive.ObjectID)
 	if !ok {
 		return "", fmt.Errorf("get inserted group id")
 	}
 
-	return id.Hex(), nil
+	ugLink := dbo.UGLink{
+		UserId:  bsonActorId,
+		GroupId: groupId,
+	}
+
+	if _, err := db.uglinks.InsertOne(ctx, ugLink); err != nil {
+		return "", fmt.Errorf("insert one: %w", err)
+	}
+
+	return groupId.Hex(), nil
 }

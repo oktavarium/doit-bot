@@ -9,5 +9,7 @@ const (
 	listsCollection      = "lists"
 	tasksCollection      = "tasks"
 	groupsCollection     = "groups"
+	uglinksCollection    = "uglinks"
+	utlinksCollection    = "utlinks"
 	migrationsCollection = "migrations"
 )

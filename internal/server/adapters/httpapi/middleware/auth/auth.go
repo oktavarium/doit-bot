@@ -21,9 +21,7 @@ func Middleware(token string, m ports.Model) gin.HandlerFunc {
 		// <auth-type> must be "tma", and <auth-data> is Telegram Mini Apps init data.
 		authParts := strings.Split(c.GetHeader(common.HeaderAuthorization), " ")
 		if len(authParts) != 2 {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"message": "Unauthorized",
-			})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, common.NewStatusResponse(http.StatusUnauthorized, "wrong authorization scheme"))
 			return
 		}
 
@@ -33,24 +31,18 @@ func Middleware(token string, m ports.Model) gin.HandlerFunc {
 		case common.AuthTypeDebug:
 			userTgId, err := strconv.Atoi(authData)
 			if err != nil {
-				c.AbortWithStatusJSON(http.StatusEarlyHints, gin.H{
-					"message": "Send me good debug auth header id you use dbg. For example: dbg 11223344",
-				})
+				c.AbortWithStatusJSON(http.StatusEarlyHints, common.NewStatusResponse(http.StatusUnauthorized, "Send me good debug auth header id you use dbg. For example: dbg 11223344"))
 				return
 			}
 
 			userId, err := m.GetUserIdByTgId(c, int64(userTgId))
 			if err != nil && !errors.Is(err, doiterr.ErrNotFound) {
-				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-					"message": err.Error(),
-				})
+				c.AbortWithStatusJSON(http.StatusInternalServerError, common.NewStatusResponse(http.StatusInternalServerError, err.Error()))
 				return
 			}
 
 			if errors.Is(err, doiterr.ErrNotFound) {
-				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-					"message": err.Error(),
-				})
+				c.AbortWithStatusJSON(http.StatusUnauthorized, common.NewStatusResponse(http.StatusUnauthorized, "for debug you have to register your user first"))
 				return
 			}
 
@@ -60,33 +52,24 @@ func Middleware(token string, m ports.Model) gin.HandlerFunc {
 			// Validate init data. We consider init data sign valid for 1 hour from their
 			// creation moment.
 			if err := initdata.Validate(authData, token, time.Hour); err != nil {
-				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-					"message": err.Error(),
-				})
+				c.AbortWithStatusJSON(http.StatusUnauthorized, common.NewStatusResponse(http.StatusUnauthorized, err.Error()))
 				return
 			}
 
-			// Parse init data. We will surely need it in the future.
 			initData, err := initdata.Parse(authData)
 			if err != nil {
-				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-					"message": err.Error(),
-				})
+				c.AbortWithStatusJSON(http.StatusBadRequest, common.NewStatusResponse(http.StatusBadRequest, err.Error()))
 				return
 			}
 
 			userId, err := m.GetUserIdByTgId(c, initData.User.ID)
 			if err != nil && !errors.Is(err, doiterr.ErrNotFound) {
-				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-					"message": err.Error(),
-				})
+				c.AbortWithStatusJSON(http.StatusInternalServerError, common.NewStatusResponse(http.StatusInternalServerError, err.Error()))
 				return
 			}
 
 			if errors.Is(err, doiterr.ErrNotFound) {
-				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-					"message": err.Error(),
-				})
+				c.AbortWithStatusJSON(http.StatusUnauthorized, common.NewStatusResponse(http.StatusUnauthorized, "user is not registered"))
 				return
 			}
 
