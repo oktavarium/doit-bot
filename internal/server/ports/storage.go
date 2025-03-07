@@ -12,7 +12,7 @@ type Storage interface {
 		actorId string,
 		assigneeId *string,
 		listId *string,
-		summary string,
+		name string,
 		description string,
 	) (string, error)
 	CreateUser(
@@ -26,8 +26,20 @@ type Storage interface {
 	CreateGroup(
 		ctx context.Context,
 		actorId string,
+		name string,
+	) (string, error)
+	CreateGroupWithChat(
+		ctx context.Context,
+		actorId string,
 		chat_tg_id int64,
 		name string,
+	) (string, error)
+	CreateList(
+		ctx context.Context,
+		actorId string,
+		groupId *string,
+		name string,
+		description string,
 	) (string, error)
 	UpdateUserById(
 		ctx context.Context,
@@ -43,14 +55,14 @@ type Storage interface {
 		taskId string,
 		assigneeId *string,
 		listId *string,
-		summary *string,
+		name *string,
 		description *string,
 		done *bool,
 	) error
 	UpdateGroupById(
 		ctx context.Context,
 		actorId string,
-		chatId string,
+		groupId string,
 		name string,
 	) error
 	SetTaskDoneById(ctx context.Context,
@@ -65,8 +77,11 @@ type Storage interface {
 	) error
 	GetTaskById(ctx context.Context, taskId string) (*dto.Task, error)
 	GetTasksByOwner(ctx context.Context, actorId string) ([]*dto.Task, error)
+	GetGroups(ctx context.Context, actorId string) ([]*dto.Group, error)
 	GetUserByTgId(ctx context.Context, tg_id int64) (*dto.User, error)
 	GetGroupByTgId(ctx context.Context, tg_id int64) (*dto.Group, error)
+	GetGroupById(ctx context.Context, actorId string, groupId string) (*dto.Group, error)
+	GetListsByGroupId(ctx context.Context, groupId string) ([]*dto.List, error)
 	DeleteTaskById(ctx context.Context, actorId string, taskId string) error
 	RemoveUserFromGroup(
 		ctx context.Context,

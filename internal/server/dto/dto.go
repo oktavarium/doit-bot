@@ -1,17 +1,26 @@
 package dto
 
+type GroupType int64
+
+const (
+	WithChat = iota
+	WithoutChat
+)
+
 type Group struct {
-	Id    string   `json:"id"`
-	TgId  int64    `json:"tg_id,omitempty"`
-	Users []string `json:"users,omitempty"`
-	Name  string   `json:"name"`
+	Id      string    `json:"id"`
+	OwnerId string    `json:"owner_id,omitempty"`
+	TgId    int64     `json:"tg_id,omitempty"`
+	Type    GroupType `json:"type"`
+	Users   []string  `json:"users,omitempty"`
+	Name    string    `json:"name"`
 }
 
 type List struct {
 	Id          string `json:"id"`
 	OwnerId     string `json:"owner_id"`
 	GroupId     string `json:"group_id"`
-	Name        string `json:"summary,omitempty"`
+	Name        string `json:"name,omitempty"`
 	Description string `json:"description,omitempty"`
 }
 
@@ -20,7 +29,7 @@ type Task struct {
 	OwnerId     string `json:"owner_id"`
 	AssigneeId  string `json:"assignee_id,omitempty"`
 	ListId      string `json:"list_id,omitempty"`
-	Summary     string `json:"summary,omitempty"`
+	Name        string `json:"name,omitempty"`
 	Description string `json:"description,omitempty"`
 	Done        bool   `json:"done"`
 }

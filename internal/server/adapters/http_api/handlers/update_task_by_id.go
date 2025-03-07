@@ -20,18 +20,13 @@ func (h *Handlers) UpdateTaskById(c *gin.Context) {
 		return
 	}
 
-	if err := validateUpdateTaskByIdRequest(request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
 	if err := h.model.UpdateTaskById(
 		c,
 		actorId,
 		request.Id,
 		request.AssigneeId,
 		request.ListId,
-		request.Summary,
+		request.Name,
 		request.Description,
 		request.Done,
 	); err != nil {

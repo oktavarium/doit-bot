@@ -9,8 +9,8 @@ func (m *Model) CreateTask(
 	actorId string,
 	assigneeId *string,
 	listId *string,
-	summary string,
+	name string,
 	description string,
 ) (string, error) {
-	return m.storage.CreateTask(ctx, actorId, assigneeId, listId, summary, description)
+	return m.storage.CreateTask(ctx, actorId, assigneeId, listId, name, description)
 }

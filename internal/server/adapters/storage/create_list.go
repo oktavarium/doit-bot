@@ -8,11 +8,10 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (db *db) CreateTask(
+func (db *db) CreateList(
 	ctx context.Context,
 	actorId string,
-	assigneeId *string,
-	listId *string,
+	groupId *string,
 	name string,
 	description string,
 ) (string, error) {
@@ -21,31 +20,31 @@ func (db *db) CreateTask(
 		return "", fmt.Errorf("invalid id: %w", err)
 	}
 
-	var bsonAssigneeId primitive.ObjectID
-	if assigneeId != nil {
-		bsonAssigneeId, err = primitive.ObjectIDFromHex(*assigneeId)
+	var bsonGroupId primitive.ObjectID
+	if groupId != nil {
+		bsonGroupId, err = primitive.ObjectIDFromHex(*groupId)
 		if err != nil {
 			return "", fmt.Errorf("invalid id: %w", err)
 		}
 	}
 
-	task := dbo.Task{
+	list := dbo.List{
 		OwnerId:     bsonActorId,
 		Name:        name,
 		Description: description,
 	}
-	if assigneeId != nil {
-		task.AssigneeId = bsonAssigneeId
+	if groupId != nil {
+		list.GroupId = bsonGroupId
 	}
 
-	result, err := db.tasks.InsertOne(ctx, task)
+	result, err := db.lists.InsertOne(ctx, list)
 	if err != nil {
 		return "", fmt.Errorf("insert one: %w", err)
 	}
 
 	id, ok := result.InsertedID.(primitive.ObjectID)
 	if !ok {
-		return "", fmt.Errorf("get inserted task id")
+		return "", fmt.Errorf("get inserted list id")
 	}
 
 	return id.Hex(), nil

@@ -24,8 +24,8 @@ func (db *db) UpdateGroupById(
 		return fmt.Errorf("invalid id: %w", err)
 	}
 
-	filter := bson.M{"_id": bsonGroupId}
-	update := bson.M{"$set": bson.M{"name": name}, "$addToSet": bson.M{"users": bsonUserId}}
+	filter := bson.M{"_id": bsonGroupId, "owner_id": bsonUserId}
+	update := bson.M{"$set": bson.M{"name": name}}
 	_, err = db.users.UpdateOne(ctx, filter, update)
 	if err != nil {
 		return fmt.Errorf("update one: %w", err)

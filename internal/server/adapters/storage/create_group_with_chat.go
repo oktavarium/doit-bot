@@ -8,9 +8,10 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (db *db) CreateGroup(
+func (db *db) CreateGroupWithChat(
 	ctx context.Context,
 	actorId string,
+	chat_tg_id int64,
 	name string,
 ) (string, error) {
 	bsonActorId, err := primitive.ObjectIDFromHex(actorId)
@@ -19,9 +20,10 @@ func (db *db) CreateGroup(
 	}
 
 	group := dbo.Group{
+		TgId:  chat_tg_id,
 		Users: []primitive.ObjectID{bsonActorId},
+		Type:  dbo.WithChat,
 		Name:  name,
-		Type:  dbo.WithoutChat,
 	}
 
 	result, err := db.groups.InsertOne(ctx, group)

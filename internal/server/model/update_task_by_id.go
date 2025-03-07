@@ -10,9 +10,9 @@ func (m *Model) UpdateTaskById(
 	taskId string,
 	assigneeId *string,
 	listId *string,
-	summary *string,
+	name *string,
 	description *string,
 	done *bool,
 ) error {
-	return m.storage.UpdateTaskById(ctx, actorId, taskId, assigneeId, listId, summary, description, done)
+	return m.storage.UpdateTaskById(ctx, actorId, taskId, assigneeId, listId, name, description, done)
 }

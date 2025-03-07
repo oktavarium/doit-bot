@@ -10,7 +10,7 @@ type Task struct {
 	OwnerId     primitive.ObjectID `bson:"owner_id,omitempty"`
 	AssigneeId  primitive.ObjectID `bson:"assignee_id,omitempty"`
 	ListId      primitive.ObjectID `bson:"list_id,omitempty"`
-	Summary     string             `bson:"summary,omitempty"`
+	Name        string             `bson:"name,omitempty"`
 	Description string             `bson:"description,omitempty"`
 	Done        bool               `bson:"done,omitempty"`
 }
@@ -21,7 +21,7 @@ func (task Task) ToDTOTask() *dto.Task {
 		OwnerId:     task.OwnerId.Hex(),
 		AssigneeId:  task.AssigneeId.Hex(),
 		ListId:      task.ListId.Hex(),
-		Summary:     task.Summary,
+		Name:        task.Name,
 		Description: task.Description,
 		Done:        task.Done,
 	}

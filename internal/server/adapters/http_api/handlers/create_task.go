@@ -20,17 +20,12 @@ func (h *Handlers) CreateTask(c *gin.Context) {
 		return
 	}
 
-	if err := validateCreateTaskRequest(request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
 	taskID, err := h.model.CreateTask(
 		c,
 		actorId,
 		request.AssigneeId,
 		request.ListId,
-		request.Summary,
+		request.Name,
 		request.Description,
 	)
 	if err != nil {
