@@ -1,0 +1,19 @@
+.text-field {
+  .MuiOutlinedInput-root {
+    height: 40px;
+    background-color: #fff;
+  }
+
+  .MuiOutlinedInput-input {
+    height: 40px;
+    padding: 0 14px;
+    -webkit-appearance: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .MuiInputLabel-root {
+    transform: translate(14px, -6px) scale(0.75);
+    background-color: #fff;
+    padding: 0 4px;
+  }
+} 

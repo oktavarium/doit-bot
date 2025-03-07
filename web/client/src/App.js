@@ -1,10 +1,11 @@
-import './App.css';
-import { useState, useEffect } from 'react';
-import BasicTextFields from './components/BasicTextFields';
-import DataTable from './components/DataTable';
-import BasicButton from './components/BasicButton';
-import { retrieveRawInitData } from '@telegram-apps/sdk';
-import { Button, Paper } from '@mui/material';
+import './App.scss';
+import { useState, useEffect, useCallback } from 'react';
+import BasicTextFields from './components/BasicTextField/BasicTextFields';
+import DataTable from './components/DataTable/DataTable';
+import BasicButton from './components/BasicButton/BasicButton';
+import { Button, Paper, Snackbar, Alert } from '@mui/material';
+import { getAllTasks, createTask, updateTask, deleteTask } from './api/functions';
+
 // Отключаем WebSocket для production
 if (process.env.NODE_ENV === 'production') {
   window.addEventListener('error', (event) => {
@@ -14,75 +15,47 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-const initData = retrieveRawInitData();
-console.log("initData ====>>>>>",initData, "<<<<<<<======");
-
 function App() {
   const [tableData, setTableData] = useState([]);
   const [inputSummary, setInputSummary] = useState('');
   const [selectedRows, setSelectedRows] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleError = useCallback((error) => {
+    setError(error.toString());
+    setTimeout(() => setError(null), 3000);
+  }, []); // Нет зависимостей, так как setError стабилен
 
   // Загрузка данных
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
-      console.log('Fetching from:', '/api/get_tasks_by_owner');
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/get_tasks_by_owner`, {
-        method: 'POST',
-        headers: {
-          "Authorization": `tma ${initData}`,
-          // "Authorization": "dbg 326804199",
-          'Content-Type': 'application/json',
-        },
-      });
-      if (!response.ok) {
-        const text = await response.text();
-        console.error('Response text:', text);
-        throw new Error(`HTTP error! status: ${response.status}, text: ${text}`);
-      }
-      const data = await response.json();
-      setTableData(data.tasks);
+      const data = await getAllTasks();
+      setTableData(data?.tasks || []);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      handleError(error);
+      setTableData([]); // Устанавливаем пустой массив в случае ошибки
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [handleError]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   // Отправка новой задачи
   const handleSend = async () => {
-    // if (!inputSummary.trim()) {
-    //   alert('Пожалуйста, заполните все поля');
-    //   return;
-    // }
-
+    if (!inputSummary.trim()) return; // Проверка на пустой ввод
+    
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/create_task`, {
-        method: 'POST',
-        headers: {
-          "Authorization": `tma ${initData}`,
-          // "Authorization": "dbg 326804199",
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          summary: inputSummary,
-          done: false,
-        }),
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
+      await createTask(inputSummary);
       setInputSummary('');
       setSelectedRows([]);
       fetchData();
     } catch (error) {
-      console.error('Error sending data:', error);
+      handleError(error);
     }
   };
 
@@ -90,29 +63,14 @@ function App() {
   const handleComplete = async () => {
     if (selectedRows.length === 0) return;
     
-    // Находим выбранную задачу
     const selectedTask = tableData.find(task => task.id === selectedRows[0]);
     if (!selectedTask) return;
 
     try {
-      console.log("selectedRows", selectedRows);
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/update_task_by_id`, {
-        method: 'POST',
-        headers: {
-          "Authorization": `tma ${initData}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id: selectedRows[0],
-          done: !selectedTask.done, // Инвертируем текущее состояние
-        }),
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      await updateTask(selectedRows, selectedTask);
       fetchData();
     } catch (error) {
-      console.error('Error updating task:', error);
+      handleError(error);
     }
   };
 
@@ -120,101 +78,45 @@ function App() {
     if (selectedRows.length === 0) return;
     
     try {
-      console.log("selectedRows", selectedRows);
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/delete_task_by_id`, {
-        method: 'POST',
-        headers: {
-          "Authorization": `tma ${initData}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id: selectedRows[0]
-        }),
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      await deleteTask(selectedRows);
       fetchData();
     } catch (error) {
-      console.error('Error deleting task:', error);
+      handleError(error);
     }
   };
 
+  // Получаем статус выбранной задачи безопасно
+  const getSelectedTaskStatus = () => {
+    const selectedTask = tableData.find(task => task.id === selectedRows[0]);
+    return selectedTask?.done ?? false;
+  };
+
   return (
-    <div style={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      height: '100vh',
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      overflow: 'hidden'
-    }}>
-      <div className="App" style={{ 
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden'
-      }}>
-        <header className="App-header" style={{ 
-          height: '50px', 
-          display: 'flex', 
-          alignItems: 'center',
-          padding: '0 20px',
-          fontSize: '14px',
-          position: 'relative',
-          backgroundColor: '#282c34',
-          flexShrink: 0
-        }}>
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center',
-            width: '100%',
-            position: 'relative'
-          }}>
-            <p style={{ 
-              margin: 0,
-              position: 'absolute',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              width: 'auto',
-              color: '#ffffff'
-            }}></p>
+    <div className="app-container">
+      <div className="app-content">
+        <header className="app-header">
+          <div className="app-header__container">
+            <p className="app-header__title"></p>
           </div>
         </header>
 
-        <div className='inputForm' style={{
-          height: '60px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '20px',
-          padding: '10px 20px',
-          position: 'relative',
-          backgroundColor: '#fff',
-          flexShrink: 0
-        }}>
-          <div style={{ flex: '3' }}>
+        <div className="input-form">
+          <div className="input-form__input-container">
             <BasicTextFields
               label='Название'
               value={inputSummary}
               onChange={(e) => setInputSummary(e.target.value)}
             />
           </div>
-          <div style={{ flex: '1' }}>
+          <div className="input-form__button-container">
             <BasicButton 
               onClick={handleSend} 
-              disabled={isLoading}
+              disabled={isLoading || !inputSummary.trim() || inputSummary.length > 30}
             />
           </div>
         </div>
 
-        <div style={{ 
-          flex: 1,
-          overflow: 'auto',
-          WebkitOverflowScrolling: 'touch'
-        }}>
+        <div className="table-container">
           {isLoading ? (
             <p>Загрузка...</p>
           ) : (
@@ -228,26 +130,13 @@ function App() {
       </div>
       
       {selectedRows.length > 0 && (
-        <Paper 
-          elevation={3} 
-          style={{
-            position: 'fixed',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            padding: '1rem',
-            display: 'flex',
-            justifyContent: 'space-around',
-            backgroundColor: '#f5f5f5',
-            zIndex: 1000
-          }}
-        >
+        <Paper className="bottom-menu" elevation={3}>
           <Button
             variant="contained"
             color="primary"
             onClick={handleComplete}
           >
-            {tableData.find(task => task.id === selectedRows[0])?.done ? 'Отменить' : 'Выполнить'}
+            {getSelectedTaskStatus() ? 'Отменить' : 'Выполнить'}
           </Button>
           <Button
             variant="contained"
@@ -258,6 +147,16 @@ function App() {
           </Button>
         </Paper>
       )}
+
+      <Snackbar 
+        open={!!error} 
+        autoHideDuration={3000} 
+        onClose={() => setError(null)}
+      >
+        <Alert severity="error" onClose={() => setError(null)}>
+          {error}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

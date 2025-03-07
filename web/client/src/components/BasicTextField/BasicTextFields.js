@@ -1,8 +1,9 @@
 import TextField from '@mui/material/TextField';
 import { useEffect } from 'react';
 import { on } from '@telegram-apps/sdk';
+import './BasicTextFields.scss';
 
-export default function BasicTextFields({ label, value, onChange, style }) {
+export default function BasicTextFields({ label, value, onChange }) {
   useEffect(() => {
     let isKeyboardOpen = false;
 
@@ -35,6 +36,7 @@ export default function BasicTextFields({ label, value, onChange, style }) {
 
   return (
     <TextField
+      className="text-field"
       label={label}
       variant="outlined"
       value={value}
@@ -42,23 +44,6 @@ export default function BasicTextFields({ label, value, onChange, style }) {
       size="small"
       fullWidth
       autoComplete="off"
-      sx={{
-        '& .MuiOutlinedInput-root': {
-          height: '40px',
-        },
-        '& .MuiOutlinedInput-input': {
-          height: '40px',
-          padding: '0 14px',
-          '-webkit-appearance': 'none',
-          '-webkit-tap-highlight-color': 'transparent'
-        },
-        '& .MuiInputLabel-root': {
-          transform: 'translate(14px, -6px) scale(0.75)',
-          backgroundColor: '#fff',
-          padding: '0 4px'
-        },
-        ...style
-      }}
     />
   );
 }
