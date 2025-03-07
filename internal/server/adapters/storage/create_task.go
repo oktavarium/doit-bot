@@ -43,10 +43,19 @@ func (db *db) CreateTask(
 		return "", fmt.Errorf("insert one: %w", err)
 	}
 
-	id, ok := result.InsertedID.(primitive.ObjectID)
+	taskId, ok := result.InsertedID.(primitive.ObjectID)
 	if !ok {
 		return "", fmt.Errorf("get inserted task id")
 	}
 
-	return id.Hex(), nil
+	utLink := dbo.UTLink{
+		UserId: bsonActorId,
+		TaskId: taskId,
+	}
+
+	if _, err := db.utlinks.InsertOne(ctx, utLink); err != nil {
+		return "", fmt.Errorf("insert one: %w", err)
+	}
+
+	return taskId.Hex(), nil
 }

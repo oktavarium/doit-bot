@@ -16,17 +16,33 @@ func (db *db) GetGroups(ctx context.Context, actorId string) ([]*dto.Group, erro
 		return nil, fmt.Errorf("invalid id: %w", err)
 	}
 
-	filter := bson.M{"users": bson.M{"$in": bsonActorId}}
-	cursor, err := db.tasks.Find(ctx, filter)
+	filter := bson.M{"user_id": bsonActorId}
+	cursor, err := db.uglinks.Find(ctx, filter)
 	if err != nil {
-		return nil, fmt.Errorf("find tasks: %w", err)
+		return nil, fmt.Errorf("find uglinks: %w", err)
+	}
+
+	// TODO rewrite to lookup with condition
+	var ugLinks []dbo.UGLink
+	if err = cursor.All(ctx, &ugLinks); err != nil {
+		return nil, fmt.Errorf("read cursor: %w", err)
+	}
+
+	groupIds := make([]primitive.ObjectID, 0, len(ugLinks))
+	for _, ugLink := range ugLinks {
+		groupIds = append(groupIds, ugLink.GroupId)
+	}
+
+	filter = bson.M{"_id": bson.M{"$in": groupIds}}
+	cursor, err = db.groups.Find(ctx, filter)
+	if err != nil {
+		return nil, fmt.Errorf("find groups: %w", err)
 	}
 
 	var groups []dbo.Group
 	if err := cursor.All(ctx, &groups); err != nil {
 		return nil, fmt.Errorf("read cursor: %w", err)
 	}
-
 	result := make([]*dto.Group, 0, len(groups))
 	for _, group := range groups {
 		result = append(result, group.ToDTOGroup())

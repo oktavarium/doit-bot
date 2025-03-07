@@ -10,13 +10,13 @@ import (
 func (h *Handlers) CreateList(c *gin.Context) {
 	actorId, ok := common.ActorIdFromContext(c)
 	if !ok {
-		c.JSON(http.StatusInternalServerError, newStatusResponse(http.StatusInternalServerError, ""))
+		c.JSON(http.StatusInternalServerError, common.NewStatusResponse(http.StatusInternalServerError, ""))
 		return
 	}
 
 	var request createListRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, newStatusResponse(http.StatusBadRequest, err.Error()))
+		c.JSON(http.StatusBadRequest, common.NewStatusResponse(http.StatusBadRequest, err.Error()))
 		return
 	}
 
@@ -28,9 +28,9 @@ func (h *Handlers) CreateList(c *gin.Context) {
 		request.Description,
 	)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, newStatusResponse(http.StatusInternalServerError, err.Error()))
+		c.JSON(http.StatusInternalServerError, common.NewStatusResponse(http.StatusInternalServerError, err.Error()))
 		return
 	}
 
-	c.JSON(http.StatusOK, createListResponse{Id: groupId, Status: status{Code: http.StatusOK}})
+	c.JSON(http.StatusOK, createListResponse{Id: groupId, Status: common.Status{Code: http.StatusOK}})
 }

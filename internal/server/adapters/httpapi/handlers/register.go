@@ -7,18 +7,24 @@ import (
 	"github.com/oktavarium/doit-bot/internal/server/adapters/httpapi/common"
 )
 
-func (h *Handlers) GetTasksByOwner(c *gin.Context) {
-	actorId, ok := common.ActorIdFromContext(c)
+func (h *Handlers) Register(c *gin.Context) {
+	initData, ok := common.InitDataFromContext(c)
 	if !ok {
 		c.JSON(http.StatusInternalServerError, common.NewStatusResponse(http.StatusInternalServerError, ""))
 		return
 	}
 
-	tasks, err := h.model.GetTasksByOwner(c, actorId)
-	if err != nil {
+	if err := h.model.CreateUser(
+		c,
+		initData.User.ID,
+		initData.Chat.ID,
+		initData.User.FirstName,
+		initData.User.LastName,
+		initData.User.Username,
+	); err != nil {
 		c.JSON(http.StatusInternalServerError, common.NewStatusResponse(http.StatusInternalServerError, err.Error()))
 		return
 	}
 
-	c.JSON(http.StatusOK, getTasksByOwnerResponse{Tasks: tasks, Status: common.Status{Code: http.StatusOK}})
+	c.JSON(http.StatusOK, common.NewStatusResponse(http.StatusOK, "welcome!"))
 }

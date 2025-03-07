@@ -10,15 +10,15 @@ import (
 func (h *Handlers) GetGroups(c *gin.Context) {
 	actorId, ok := common.ActorIdFromContext(c)
 	if !ok {
-		c.JSON(http.StatusInternalServerError, newStatusResponse(http.StatusInternalServerError, ""))
+		c.JSON(http.StatusInternalServerError, common.NewStatusResponse(http.StatusInternalServerError, ""))
 		return
 	}
 
 	groups, err := h.model.GetGroups(c, actorId)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, newStatusResponse(http.StatusInternalServerError, err.Error()))
+		c.JSON(http.StatusInternalServerError, common.NewStatusResponse(http.StatusInternalServerError, err.Error()))
 		return
 	}
 
-	c.JSON(http.StatusOK, getGroupsResponse{Groups: groups, Status: status{Code: http.StatusOK}})
+	c.JSON(http.StatusOK, getGroupsResponse{Groups: groups, Status: common.Status{Code: http.StatusOK}})
 }

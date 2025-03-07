@@ -44,6 +44,7 @@ type Model interface {
 	DeleteTaskById(ctx context.Context, actorId string, id string) error
 	GetTaskById(ctx context.Context, id string) (*dto.Task, error)
 	GetTasksByOwner(ctx context.Context, actorId string) ([]*dto.Task, error)
+	GetTasks(ctx context.Context, actorId string) ([]*dto.Task, error)
 	GetGroups(ctx context.Context, actorId string) ([]*dto.Group, error)
 	GetListsByGroupId(ctx context.Context, actorId string, groupId string) ([]*dto.List, error)
 	GetUserIdByTgId(ctx context.Context, id int64) (string, error)

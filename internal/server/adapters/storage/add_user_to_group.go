@@ -2,10 +2,13 @@ package storage
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
+	"github.com/oktavarium/doit-bot/internal/server/adapters/storage/dbo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func (db *db) AddUserToGroup(
@@ -23,12 +26,20 @@ func (db *db) AddUserToGroup(
 		return fmt.Errorf("invalid id: %w", err)
 	}
 
-	filter := bson.M{"_id": bsonGroupId}
-	update := bson.M{"$addToSet": bson.M{"users": bsonUserId}}
+	var uglink dbo.UGLink
+	if err := db.uglinks.FindOne(ctx, bson.M{"user_id": bsonUserId, "group_id": bsonGroupId}).Decode(&uglink); err != nil {
+		if !errors.Is(err, mongo.ErrNoDocuments) {
+			return fmt.Errorf("find ug link: %w", err)
+		}
+	}
 
-	_, err = db.groups.UpdateOne(ctx, filter, update)
-	if err != nil {
-		return fmt.Errorf("update one: %w", err)
+	uglink = dbo.UGLink{
+		UserId:  bsonUserId,
+		GroupId: bsonGroupId,
+	}
+
+	if _, err := db.uglinks.InsertOne(ctx, uglink); err != nil {
+		return fmt.Errorf("insert one: %w", err)
 	}
 
 	return nil
