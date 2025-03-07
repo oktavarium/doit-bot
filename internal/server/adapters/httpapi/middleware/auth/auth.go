@@ -21,7 +21,7 @@ func Middleware(token string, m ports.Model) gin.HandlerFunc {
 		// <auth-type> must be "tma", and <auth-data> is Telegram Mini Apps init data.
 		authParts := strings.Split(c.GetHeader(common.HeaderAuthorization), " ")
 		if len(authParts) != 2 {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, common.NewStatusResponse(http.StatusUnauthorized, "wrong authorization scheme"))
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewStatusResponse(http.StatusBadRequest, "wrong authorization scheme"))
 			return
 		}
 
@@ -31,7 +31,7 @@ func Middleware(token string, m ports.Model) gin.HandlerFunc {
 		case common.AuthTypeDebug:
 			userTgId, err := strconv.Atoi(authData)
 			if err != nil {
-				c.AbortWithStatusJSON(http.StatusEarlyHints, common.NewStatusResponse(http.StatusUnauthorized, "Send me good debug auth header id you use dbg. For example: dbg 11223344"))
+				c.AbortWithStatusJSON(http.StatusBadRequest, common.NewStatusResponse(http.StatusBadRequest, "Send me good debug auth header id you use dbg. For example: dbg 11223344"))
 				return
 			}
 
@@ -52,7 +52,7 @@ func Middleware(token string, m ports.Model) gin.HandlerFunc {
 			// Validate init data. We consider init data sign valid for 1 hour from their
 			// creation moment.
 			if err := initdata.Validate(authData, token, time.Hour); err != nil {
-				c.AbortWithStatusJSON(http.StatusUnauthorized, common.NewStatusResponse(http.StatusUnauthorized, err.Error()))
+				c.AbortWithStatusJSON(http.StatusBadRequest, common.NewStatusResponse(http.StatusBadRequest, err.Error()))
 				return
 			}
 
@@ -78,9 +78,7 @@ func Middleware(token string, m ports.Model) gin.HandlerFunc {
 			c.Request = c.Request.WithContext(ctx)
 
 		default:
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"message": "not supported auth type",
-			})
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewStatusResponse(http.StatusBadRequest, "not supported authentication scheme"))
 		}
 	}
 }
