@@ -13,7 +13,7 @@ type createTaskRequest struct {
 }
 
 type createTaskResponse struct {
-	Id     string        `json:"id" validate:"required,eq=24"`
+	Id     string        `json:"id"`
 	Status common.Status `json:"status"`
 }
 
@@ -22,7 +22,7 @@ type createGroupRequest struct {
 }
 
 type createGroupResponse struct {
-	Id     string        `json:"id" validate:"required,eq=24"`
+	Id     string        `json:"id"`
 	Status common.Status `json:"status"`
 }
 
@@ -38,7 +38,7 @@ type createListRequest struct {
 }
 
 type createListResponse struct {
-	Id     string        `json:"id" validate:"required,eq=24"`
+	Id     string        `json:"id"`
 	Status common.Status `json:"status"`
 }
 
