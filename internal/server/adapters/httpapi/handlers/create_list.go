@@ -15,7 +15,7 @@ func (h *Handlers) CreateList(c *gin.Context) {
 	}
 
 	var request createListRequest
-	if err := c.BindJSON(&request); err != nil {
+	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, newStatusResponse(http.StatusBadRequest, err.Error()))
 		return
 	}

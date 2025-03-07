@@ -8,7 +8,7 @@ import (
 
 func (h *Handlers) GetTaskById(c *gin.Context) {
 	var request getTaskByIdRequest
-	if err := c.BindJSON(&request); err != nil {
+	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, newStatusResponse(http.StatusBadRequest, err.Error()))
 		return
 	}

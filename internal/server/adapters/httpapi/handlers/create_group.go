@@ -15,7 +15,7 @@ func (h *Handlers) CreateGroup(c *gin.Context) {
 	}
 
 	var request createGroupRequest
-	if err := c.BindJSON(&request); err != nil {
+	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, newStatusResponse(http.StatusBadRequest, err.Error()))
 		return
 	}

@@ -15,7 +15,7 @@ func (h *Handlers) CreateTask(c *gin.Context) {
 	}
 
 	var request createTaskRequest
-	if err := c.BindJSON(&request); err != nil {
+	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, newStatusResponse(http.StatusBadRequest, err.Error()))
 		return
 	}
