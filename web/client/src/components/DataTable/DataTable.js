@@ -3,6 +3,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
+import './DataTable.scss';
 
 const columns = [
   { 
@@ -25,7 +26,7 @@ const columns = [
     )
   },
   { 
-    field: 'summary', 
+    field: 'name', 
     headerName: 'Задача', 
     type: 'string', 
     flex: 2,
@@ -41,15 +42,8 @@ const columns = [
 ];
 
 export default function DataTable({ rows, selectedRows, onSelectionChange }) {
-  console.log("rows", rows);
   return (
-    <Paper sx={{
-      margin: '0 20px',
-      height: 'calc(100vh - 180px)',
-      overflow: 'hidden',
-      backgroundColor: 'transparent',
-      boxShadow: 'none'
-    }}>
+    <Paper className="data-table">
       <DataGrid
         rows={rows}
         columns={columns}
