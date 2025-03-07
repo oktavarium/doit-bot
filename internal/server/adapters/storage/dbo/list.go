@@ -14,11 +14,17 @@ type List struct {
 }
 
 func (list List) ToDTOList() *dto.List {
-	return &dto.List{
+	dtoList := &dto.List{
 		Id:          list.Id.Hex(),
 		OwnerId:     list.OwnerId.Hex(),
 		GroupId:     list.GroupId.Hex(),
 		Name:        list.Name,
 		Description: list.Description,
 	}
+
+	if !list.GroupId.IsZero() {
+		dtoList.GroupId = list.GroupId.Hex()
+	}
+
+	return dtoList
 }

@@ -16,13 +16,21 @@ type Task struct {
 }
 
 func (task Task) ToDTOTask() *dto.Task {
-	return &dto.Task{
+	dtoTask := &dto.Task{
 		Id:          task.Id.Hex(),
 		OwnerId:     task.OwnerId.Hex(),
-		AssigneeId:  task.AssigneeId.Hex(),
-		ListId:      task.ListId.Hex(),
 		Name:        task.Name,
 		Description: task.Description,
 		Done:        task.Done,
 	}
+
+	if !task.AssigneeId.IsZero() {
+		dtoTask.AssigneeId = task.AssigneeId.Hex()
+	}
+
+	if !task.AssigneeId.IsZero() {
+		dtoTask.ListId = task.ListId.Hex()
+	}
+
+	return dtoTask
 }
