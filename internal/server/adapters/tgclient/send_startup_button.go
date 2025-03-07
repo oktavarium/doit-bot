@@ -1,4 +1,4 @@
-package tg_client
+package tgclient
 
 import (
 	"context"

@@ -6,7 +6,7 @@ import (
 
 	ratelimit "github.com/JGLTechnologies/gin-rate-limit"
 	"github.com/gin-gonic/gin"
-	"github.com/oktavarium/doit-bot/internal/server/adapters/http_api/common"
+	"github.com/oktavarium/doit-bot/internal/server/adapters/httpapi/common"
 )
 
 const (

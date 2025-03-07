@@ -4,9 +4,9 @@ import (
 	sizelimiter "github.com/gin-contrib/size"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
-	"github.com/oktavarium/doit-bot/internal/server/adapters/http_api/middleware/cors"
-	"github.com/oktavarium/doit-bot/internal/server/adapters/http_api/middleware/logger"
-	"github.com/oktavarium/doit-bot/internal/server/adapters/http_api/middleware/ratelimiter"
+	"github.com/oktavarium/doit-bot/internal/server/adapters/httpapi/middleware/cors"
+	"github.com/oktavarium/doit-bot/internal/server/adapters/httpapi/middleware/logger"
+	"github.com/oktavarium/doit-bot/internal/server/adapters/httpapi/middleware/ratelimiter"
 	"github.com/oktavarium/doit-bot/web"
 )
 

@@ -4,19 +4,19 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/oktavarium/doit-bot/internal/server/adapters/http_api/common"
+	"github.com/oktavarium/doit-bot/internal/server/adapters/httpapi/common"
 )
 
 func (h *Handlers) UpdateTaskById(c *gin.Context) {
 	actorId, ok := common.ActorIdFromContext(c)
 	if !ok {
-		c.AbortWithStatus(http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, newStatusResponse(http.StatusInternalServerError, ""))
 		return
 	}
 
 	var request updateTaskByIdRequest
 	if err := c.BindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, newStatusResponse(http.StatusBadRequest, err.Error()))
 		return
 	}
 
@@ -30,9 +30,9 @@ func (h *Handlers) UpdateTaskById(c *gin.Context) {
 		request.Description,
 		request.Done,
 	); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, newStatusResponse(http.StatusInternalServerError, err.Error()))
 		return
 	}
 
-	c.Status(http.StatusOK)
+	c.JSON(http.StatusOK, newStatusResponse(http.StatusOK, ""))
 }

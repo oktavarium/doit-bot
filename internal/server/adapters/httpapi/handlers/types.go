@@ -2,6 +2,24 @@ package handlers
 
 import "github.com/oktavarium/doit-bot/internal/server/dto"
 
+type status struct {
+	Code    int64  `json:"code"`
+	Message string `json:"message"`
+}
+
+type statusResponse struct {
+	Status status `json:"status"`
+}
+
+func newStatusResponse(code int64, message string) statusResponse {
+	return statusResponse{
+		Status: status{
+			Code:    code,
+			Message: message,
+		},
+	}
+}
+
 type createTaskRequest struct {
 	AssigneeId  *string `json:"assignee_id,omitempty" validation:"omitnil,required,lte=32"`
 	ListId      *string `json:"list_id,omitempty" validation:"required"`
@@ -10,7 +28,8 @@ type createTaskRequest struct {
 }
 
 type createTaskResponse struct {
-	Id string `json:"id" validation:"required"`
+	Id     string `json:"id" validation:"required"`
+	Status status `json:"status"`
 }
 
 type createGroupRequest struct {
@@ -18,11 +37,13 @@ type createGroupRequest struct {
 }
 
 type createGroupResponse struct {
-	Id string `json:"id" validation:"required"`
+	Id     string `json:"id" validation:"required"`
+	Status status `json:"status"`
 }
 
 type getGroupsResponse struct {
 	Groups []*dto.Group `json:"groups"`
+	Status status       `json:"status"`
 }
 
 type createListRequest struct {
@@ -32,7 +53,8 @@ type createListRequest struct {
 }
 
 type createListResponse struct {
-	Id string `json:"id" validation:"required"`
+	Id     string `json:"id" validation:"required"`
+	Status status `json:"status"`
 }
 
 type deleteTaskByIdRequest struct {
@@ -40,11 +62,13 @@ type deleteTaskByIdRequest struct {
 }
 
 type getTaskByIdRequest struct {
-	Id string `json:"id" validation:"required"`
+	Id     string `json:"id" validation:"required"`
+	Status status `json:"status"`
 }
 
 type getTaskByIdResponse struct {
 	*dto.Task
+	Status status `json:"status"`
 }
 
 type getListsByGroupIdRequest struct {
@@ -52,11 +76,13 @@ type getListsByGroupIdRequest struct {
 }
 
 type getListsByGroupIdResponse struct {
-	Lists []*dto.List `json:"lists"`
+	Lists  []*dto.List `json:"lists"`
+	Status status      `json:"status"`
 }
 
 type getTasksByOwnerResponse struct {
-	Tasks []*dto.Task `json:"tasks"`
+	Tasks  []*dto.Task `json:"tasks"`
+	Status status      `json:"status"`
 }
 
 type updateTaskByIdRequest struct {

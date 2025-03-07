@@ -8,10 +8,10 @@ import (
 	"os/signal"
 
 	"github.com/oktavarium/doit-bot/internal/config"
-	"github.com/oktavarium/doit-bot/internal/server/adapters/http_api"
+	"github.com/oktavarium/doit-bot/internal/server/adapters/httpapi"
 	"github.com/oktavarium/doit-bot/internal/server/adapters/storage"
-	"github.com/oktavarium/doit-bot/internal/server/adapters/tg_api"
-	"github.com/oktavarium/doit-bot/internal/server/adapters/tg_client"
+	"github.com/oktavarium/doit-bot/internal/server/adapters/tgapi"
+	"github.com/oktavarium/doit-bot/internal/server/adapters/tgclient"
 	"github.com/oktavarium/doit-bot/internal/server/model"
 	"golang.org/x/sync/errgroup"
 )
@@ -24,7 +24,7 @@ func Run() error {
 	}
 
 	// Init outcoming adapters
-	tgclient, err := tg_client.New(cfg.GetToken())
+	tgClient, err := tgclient.New(cfg.GetToken())
 	if err != nil {
 		return fmt.Errorf("create tg client: %w", err)
 	}
@@ -35,15 +35,15 @@ func Run() error {
 	}
 
 	// Init domain model
-	model := model.New(tgclient, storage)
+	model := model.New(tgClient, storage)
 
 	// Init incoming adapters
-	tg_server, err := tg_api.New(cfg.GetToken(), model)
+	tgAPI, err := tgapi.New(cfg.GetToken(), model)
 	if err != nil {
 		return fmt.Errorf("init tg api: %w", err)
 	}
 
-	http_server := http_api.New(cfg.GetEndpoint(), cfg.GetToken(), model)
+	httpAPI := httpapi.New(cfg.GetEndpoint(), cfg.GetToken(), model)
 
 	// Start server
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
@@ -52,10 +52,10 @@ func Run() error {
 	eg, ctx := errgroup.WithContext(ctx)
 
 	eg.Go(func() error {
-		return http_server.Serve(ctx)
+		return httpAPI.Serve(ctx)
 	})
 	eg.Go(func() error {
-		return tg_server.Serve(ctx)
+		return tgAPI.Serve(ctx)
 	})
 	if err := eg.Wait(); err != nil {
 		return fmt.Errorf("start api: %w", err)

@@ -1,11 +1,11 @@
-package tg_api
+package tgapi
 
 import (
 	"context"
 	"fmt"
 
 	"github.com/go-telegram/bot"
-	"github.com/oktavarium/doit-bot/internal/server/adapters/tg_api/handlers"
+	"github.com/oktavarium/doit-bot/internal/server/adapters/tgapi/handlers"
 	"github.com/oktavarium/doit-bot/internal/server/ports"
 )
 

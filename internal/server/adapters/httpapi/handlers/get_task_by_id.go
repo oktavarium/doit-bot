@@ -9,7 +9,7 @@ import (
 func (h *Handlers) GetTaskById(c *gin.Context) {
 	var request getTaskByIdRequest
 	if err := c.BindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, newStatusResponse(http.StatusBadRequest, err.Error()))
 		return
 	}
 
@@ -18,9 +18,9 @@ func (h *Handlers) GetTaskById(c *gin.Context) {
 		request.Id,
 	)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, newStatusResponse(http.StatusInternalServerError, err.Error()))
 		return
 	}
 
-	c.JSON(http.StatusOK, getTaskByIdResponse{task})
+	c.JSON(http.StatusOK, getTaskByIdResponse{Task: task, Status: status{Code: http.StatusOK}})
 }

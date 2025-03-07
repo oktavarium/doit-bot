@@ -1,4 +1,4 @@
-package http_api
+package httpapi
 
 import (
 	"context"
@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/oktavarium/doit-bot/internal/server/adapters/http_api/handlers"
-	"github.com/oktavarium/doit-bot/internal/server/adapters/http_api/middleware"
+	"github.com/oktavarium/doit-bot/internal/server/adapters/httpapi/handlers"
+	"github.com/oktavarium/doit-bot/internal/server/adapters/httpapi/middleware"
 	"github.com/oktavarium/doit-bot/internal/server/ports"
 )
 

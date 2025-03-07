@@ -9,7 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/oktavarium/doit-bot/internal/doiterr"
-	"github.com/oktavarium/doit-bot/internal/server/adapters/http_api/common"
+	"github.com/oktavarium/doit-bot/internal/server/adapters/httpapi/common"
 	"github.com/oktavarium/doit-bot/internal/server/ports"
 	initdata "github.com/telegram-mini-apps/init-data-golang"
 )

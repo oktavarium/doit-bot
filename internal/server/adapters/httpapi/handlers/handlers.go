@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/oktavarium/doit-bot/internal/server/adapters/http_api/middleware/auth"
+	"github.com/oktavarium/doit-bot/internal/server/adapters/httpapi/middleware/auth"
 	"github.com/oktavarium/doit-bot/internal/server/ports"
 )
 
