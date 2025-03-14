@@ -8,12 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (db *db) DeleteTaskById(ctx context.Context, actorId string, taskId string) error {
-	bsonActorId, err := primitive.ObjectIDFromHex(actorId)
-	if err != nil {
-		return fmt.Errorf("invalid id: %w", err)
-	}
-
+func (db *db) DeleteTask(ctx context.Context, taskId string) error {
 	bsonTaskId, err := primitive.ObjectIDFromHex(taskId)
 	if err != nil {
 		return fmt.Errorf("invalid id: %w", err)
@@ -21,12 +16,8 @@ func (db *db) DeleteTaskById(ctx context.Context, actorId string, taskId string)
 
 	filter := bson.D{
 		{
-			Key:   "_id",
+			Key:   "id",
 			Value: bsonTaskId,
-		},
-		{
-			Key:   "owner_id",
-			Value: bsonActorId,
 		},
 	}
 

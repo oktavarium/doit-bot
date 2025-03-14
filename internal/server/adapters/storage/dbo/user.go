@@ -1,22 +1,32 @@
 package dbo
 
 import (
-	"github.com/oktavarium/doit-bot/internal/server/dto"
+	"github.com/oktavarium/doit-bot/internal/server/domain/users"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type User struct {
-	Id        primitive.ObjectID `bson:"_id,omitempty"`
-	TgId      int64              `bson:"tg_id,omitempty"`
-	ChatTgId  int64              `bson:"chat_tg_id,omitempty"`
-	FirstName string             `bson:"first_name,omitempty"`
-	LastName  string             `bson:"last_name,omitempty"`
-	Username  string             `bson:"username,omitempty"`
+	_id      primitive.ObjectID `bson:"_id,omitempty"`
+	id       string             `bson:"id,omitempty"`
+	tgId     int64              `bson:"tg_id,omitempty"`
+	chatTgId int64              `bson:"chat_tg_id,omitempty"`
+	username string             `bson:"username,omitempty"`
 }
 
-func (user User) ToDTOUser() *dto.User {
-	return &dto.User{
-		Id:   user.Id.Hex(),
-		TgId: user.TgId,
+func FromDomainUser(du *users.User) User {
+	return User{
+		id:       du.Id(),
+		tgId:     du.TgId(),
+		chatTgId: du.ChatTgId(),
+		username: du.Username(),
 	}
+}
+
+func (u User) ToDomainUser() (*users.User, error) {
+	return users.RestoreUserFromDB(
+		u.id,
+		u.tgId,
+		u.chatTgId,
+		u.username,
+	)
 }

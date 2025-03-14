@@ -9,3 +9,6 @@ build.front:
 
 lint:
 	go run ./cmd/staticlint ./...
+
+gen:
+	go generate ./...

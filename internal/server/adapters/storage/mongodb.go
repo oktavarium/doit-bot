@@ -10,13 +10,9 @@ import (
 )
 
 type db struct {
-	client  *mongo.Client
-	users   *mongo.Collection
-	groups  *mongo.Collection
-	uglinks *mongo.Collection
-	utlinks *mongo.Collection
-	tasks   *mongo.Collection
-	lists   *mongo.Collection
+	client *mongo.Client
+	users  *mongo.Collection
+	tasks  *mongo.Collection
 }
 
 func New(uri string) (*db, error) {
@@ -34,12 +30,8 @@ func New(uri string) (*db, error) {
 	}
 
 	return &db{
-		client:  client,
-		users:   database.Collection(usersCollection),
-		groups:  database.Collection(groupsCollection),
-		uglinks: database.Collection(uglinksCollection),
-		utlinks: database.Collection(utlinksCollection),
-		tasks:   database.Collection(tasksCollection),
-		lists:   database.Collection(listsCollection),
+		client: client,
+		users:  database.Collection(usersCollection),
+		tasks:  database.Collection(tasksCollection),
 	}, nil
 }

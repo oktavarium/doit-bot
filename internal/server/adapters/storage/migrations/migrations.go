@@ -2,8 +2,6 @@ package migrations
 
 import (
 	"context"
-	"errors"
-	"fmt"
 
 	"github.com/coreos/go-semver/semver"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -22,14 +20,14 @@ func getAllMigrations() []migration {
 }
 
 func Run(ctx context.Context, db *mongo.Database) error {
-	if db == nil {
-		return errors.New("empty collection")
-	}
+	// if db == nil {
+	// 	return errors.New("empty collection")
+	// }
 
-	for _, m := range getAllMigrations() {
-		if err := m.Update(ctx, db); err != nil {
-			return fmt.Errorf("run migration: %w", err)
-		}
-	}
+	// for _, m := range getAllMigrations() {
+	// 	if err := app.Update(ctx, db); err != nil {
+	// 		return fmt.Errorf("run migration: %w", err)
+	// 	}
+	// }
 	return nil
 }
