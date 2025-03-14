@@ -7,9 +7,6 @@ import (
 	"github.com/oktavarium/doit-bot/internal/doiterr"
 )
 
-const defaultListenAddress = "0.0.0.0:8080"
-const defaultURI = "mongodb://127.0.0.1:27017/?directConnection=true"
-
 type Config struct {
 	token         string
 	listenAddress string
@@ -35,11 +32,11 @@ func (c *Config) validate() error {
 	}
 
 	if c.GetEndpoint() == "" {
-		c.listenAddress = defaultListenAddress
+		return doiterr.ErrEmptyEndpoint
 	}
 
 	if c.GetUri() == "" {
-		c.uri = defaultURI
+		return doiterr.ErrEmptyDbURI
 	}
 
 	return nil

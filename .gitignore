@@ -3,6 +3,7 @@ __debug*
 .DS_Store
 /bin
 
+.env
 
 # dependencies
 /web/client/node_modules

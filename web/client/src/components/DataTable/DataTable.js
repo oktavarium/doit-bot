@@ -6,16 +6,16 @@ import CloseIcon from '@mui/icons-material/Close';
 import './DataTable.scss';
 
 const columns = [
-  { 
-    field: 'done', 
-    headerName: 'Выполнено', 
-    type: 'boolean',  
+  {
+    field: 'status',
+    headerName: 'Выполнено',
+    type: 'boolean',
     flex: 1,
     renderCell: (params) => (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        width: '100%' 
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        width: '100%'
       }}>
         {params.value ? (
           <CheckIcon style={{ color: '#4caf50' }} /> // зеленый цвет для галочки
@@ -25,15 +25,15 @@ const columns = [
       </div>
     )
   },
-  { 
-    field: 'name', 
-    headerName: 'Задача', 
-    type: 'string', 
+  {
+    field: 'name',
+    headerName: 'Задача',
+    type: 'string',
     flex: 2,
     renderCell: (params) => (
-      <div style={{ 
-        textDecoration: params.row.done ? 'line-through' : 'none',
-        color: params.row.done ? '#666' : 'inherit'
+      <div style={{
+        textDecoration: params.row.status ? 'line-through' : 'none',
+        color: params.row.status ? '#666' : 'inherit'
       }}>
         {params.value}
       </div>

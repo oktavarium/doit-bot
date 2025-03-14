@@ -9,3 +9,18 @@ build.front:
 
 lint:
 	go run ./cmd/staticlint ./...
+
+gen:
+	go generate ./...
+
+dc-up:
+	docker compose up
+
+dc-down:
+	docker compose down
+
+dc-rebuild:
+	docker compose build
+
+dc-up-mongo:
+	docker compose up mongo

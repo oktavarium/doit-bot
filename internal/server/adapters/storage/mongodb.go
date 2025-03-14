@@ -12,14 +12,11 @@ import (
 type db struct {
 	client *mongo.Client
 	users  *mongo.Collection
-	groups *mongo.Collection
 	tasks  *mongo.Collection
-	lists  *mongo.Collection
 }
 
 func New(uri string) (*db, error) {
 	clientOpts := options.Client().ApplyURI(uri)
-
 	ctx := context.Background()
 	client, err := mongo.Connect(ctx, clientOpts)
 	if err != nil {
@@ -34,8 +31,6 @@ func New(uri string) (*db, error) {
 	return &db{
 		client: client,
 		users:  database.Collection(usersCollection),
-		groups: database.Collection(groupsCollection),
 		tasks:  database.Collection(tasksCollection),
-		lists:  database.Collection(listsCollection),
 	}, nil
 }

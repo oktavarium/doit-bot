@@ -5,48 +5,15 @@ import (
 	"fmt"
 
 	"github.com/oktavarium/doit-bot/internal/server/adapters/storage/dbo"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"github.com/oktavarium/doit-bot/internal/server/domain/planner"
 )
 
-func (db *db) CreateTask(
-	ctx context.Context,
-	actorId string,
-	assigneeId *string,
-	listId *string,
-	name string,
-	description string,
-) (string, error) {
-	bsonActorId, err := primitive.ObjectIDFromHex(actorId)
-	if err != nil {
-		return "", fmt.Errorf("invalid id: %w", err)
+func (db *db) CreateTask(ctx context.Context, task *planner.Task) error {
+	dboTask := dbo.FromDomainTask(task)
+
+	if _, err := db.tasks.InsertOne(ctx, dboTask); err != nil {
+		return fmt.Errorf("insert one: %w", err)
 	}
 
-	var bsonAssigneeId primitive.ObjectID
-	if assigneeId != nil {
-		bsonAssigneeId, err = primitive.ObjectIDFromHex(*assigneeId)
-		if err != nil {
-			return "", fmt.Errorf("invalid id: %w", err)
-		}
-	}
-
-	task := dbo.Task{
-		OwnerId:     bsonActorId,
-		Name:        name,
-		Description: description,
-	}
-	if assigneeId != nil {
-		task.AssigneeId = bsonAssigneeId
-	}
-
-	result, err := db.tasks.InsertOne(ctx, task)
-	if err != nil {
-		return "", fmt.Errorf("insert one: %w", err)
-	}
-
-	id, ok := result.InsertedID.(primitive.ObjectID)
-	if !ok {
-		return "", fmt.Errorf("get inserted task id")
-	}
-
-	return id.Hex(), nil
+	return nil
 }
