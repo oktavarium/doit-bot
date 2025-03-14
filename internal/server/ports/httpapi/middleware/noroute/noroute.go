@@ -9,6 +9,6 @@ import (
 
 func Middleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.JSON(http.StatusNotFound, common.NewStatusResponse(http.StatusNotFound, "no such route"))
+		c.JSON(http.StatusNotFound, common.NewStatusResponse(http.StatusNotFound, "no such method"))
 	}
 }

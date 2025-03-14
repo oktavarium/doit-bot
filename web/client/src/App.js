@@ -88,7 +88,7 @@ function App() {
   // Получаем статус выбранной задачи безопасно
   const getSelectedTaskStatus = () => {
     const selectedTask = tableData.find(task => task.id === selectedRows[0]);
-    return selectedTask?.done ?? false;
+    return selectedTask?.status ?? false;
   };
 
   return (

@@ -1,5 +1,5 @@
 import { API_URL } from "./constants";
-import { getWithAuth, postWithAuth } from "../utils/api.utils";
+import { getWithAuth, postWithAuth, patchWithAuth, deleteWithAuth} from "../utils/api.utils";
 
 export const getAllTasks = () => {
     return getWithAuth(API_URL.getAllTasks);
@@ -8,19 +8,17 @@ export const getAllTasks = () => {
 export const createTask = (inputSummary) => {
     return postWithAuth(API_URL.createTask, {
         name: inputSummary,
-        done: false,
+        status: false,
     });
 }
 
 export const updateTask = (selectedRows, selectedTask) => {
-    return postWithAuth(API_URL.updateTask, {
-        id: selectedRows[0],
-        done: !selectedTask.done,
+    return patchWithAuth(API_URL.updateTask + "/" + selectedRows[0], {
+        status: !selectedTask.status,
     });
 }
 
 export const deleteTask = (selectedRows) => {
-    return postWithAuth(API_URL.deleteTask, {
-        id: selectedRows[0]
+    return deleteWithAuth(API_URL.deleteTask+"/" + selectedRows[0], {
     });
 }

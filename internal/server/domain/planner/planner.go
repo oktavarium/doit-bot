@@ -97,42 +97,24 @@ func (s *DomainService) GetTasks(ctx context.Context, actorId string) ([]*Task, 
 	return s.repo.GetTasks(ctx, actorId)
 }
 
-func (s *DomainService) GetTask(ctx context.Context, taskId string) (*Task, error) {
+func (s *DomainService) GetTask(ctx context.Context, actorId string, taskId string) (*Task, error) {
 	if err := validateId(taskId); err != nil {
 		return nil, fmt.Errorf("validate task id: %w", err)
 	}
 
-	return s.repo.GetTask(ctx, taskId)
+	if err := validateId(actorId); err != nil {
+		return nil, fmt.Errorf("validate actor id: %w", err)
+	}
+
+	return s.repo.GetTask(ctx, actorId, taskId)
 }
 
 func (s *DomainService) DeleteTask(ctx context.Context, actorId string, taskId string) error {
-	task, err := s.GetTask(ctx, taskId)
-	if err != nil {
-		return fmt.Errorf("get task by id: %w", err)
-	}
-
-	if task.ownerId != actorId {
-		return ErrForbidden
-	}
-
-	return s.repo.DeleteTask(ctx, taskId)
+	return s.repo.DeleteTask(ctx, actorId, taskId)
 }
 
-func (s *DomainService) UpdateTask(ctx context.Context, task *Task) error {
-	oldTask, err := s.GetTask(ctx, task.id)
-	if err != nil {
-		return fmt.Errorf("get task by id: %w", err)
-	}
-
-	if oldTask.ownerId != task.ownerId {
-		return ErrForbidden
-	}
-
-	oldTask.name = task.name
-	oldTask.description = task.description
-	oldTask.status = task.status
-
-	return s.repo.UpdateTask(ctx, task)
+func (s *DomainService) UpdateTask(ctx context.Context, actorId string, task *Task) error {
+	return s.repo.UpdateTask(ctx, actorId, task)
 }
 
 func RestoreTaskFromDB(

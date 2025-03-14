@@ -6,12 +6,12 @@ import (
 )
 
 type Task struct {
-	DbId         primitive.ObjectID `bson:"_id,omitempty"`
+	DbId        primitive.ObjectID `bson:"_id,omitempty"`
 	Id          string             `bson:"id,omitempty"`
 	OwnerId     string             `bson:"owner_id,omitempty"`
 	Name        string             `bson:"name,omitempty"`
 	Description string             `bson:"description,omitempty"`
-	Status      bool               `bson:"done,omitempty"`
+	Status      bool               `bson:"status,omitempty"`
 }
 
 func FromDomainTask(dt *planner.Task) Task {

@@ -26,14 +26,14 @@ func NewSetTaskStatusHandler(domainService *planner.DomainService) SetTaskStatus
 }
 
 func (h setTaskStatusHandler) Handle(ctx context.Context, cmd SetTaskStatus) error {
-	task, err := h.domainService.GetTask(ctx, cmd.TaskId)
+	task, err := h.domainService.GetTask(ctx, cmd.ActorId, cmd.TaskId)
 	if err != nil {
-		return fmt.Errorf("create task: %w", err)
+		return fmt.Errorf("get task: %w", err)
 	}
 
 	if err := task.SetStatus(cmd.Status); err != nil {
 		return fmt.Errorf("set status: %w", err)
 	}
 
-	return h.domainService.UpdateTask(ctx, task)
+	return h.domainService.UpdateTask(ctx, cmd.ActorId, task)
 }

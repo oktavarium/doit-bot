@@ -12,9 +12,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func (db *db) GetTask(ctx context.Context, taskId string) (*planner.Task, error) {
+func (db *db) GetTask(ctx context.Context, actorId string, taskId string) (*planner.Task, error) {
 	var result dbo.Task
-	if err := db.users.FindOne(ctx, bson.M{"id": taskId}).Decode(&result); err != nil {
+	filter := bson.M{"id": taskId, "owner_id": actorId}
+	if err := db.tasks.FindOne(ctx, filter).Decode(&result); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, doiterr.ErrNotFound
 		}

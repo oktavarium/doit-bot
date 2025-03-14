@@ -10,7 +10,8 @@ import (
 )
 
 func (db *db) GetTasks(ctx context.Context, actorId string) ([]*planner.Task, error) {
-	cursor, err := db.tasks.Find(ctx, bson.M{"owner_id": actorId})
+	filter := bson.M{"owner_id": actorId}
+	cursor, err := db.tasks.Find(ctx, filter)
 	if err != nil {
 		return nil, fmt.Errorf("find tasks: %w", err)
 	}

@@ -16,13 +16,13 @@ paths:
               $ref: '#/components/schemas/NewTaskRequest'
       responses:
         '201':
-          description: ok
+          description: "ok"
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TaskIdResponse'
         default:
-          description: default
+          description: "default"
           content:
             application/json:
               schema:
@@ -32,7 +32,7 @@ paths:
       summary: Get all tasks
       responses:
         '200':
-          description: ok
+          description: "ok"
           content:
             application/json:
               schema:
@@ -40,12 +40,12 @@ paths:
                 items:
                   $ref: '#/components/schemas/TasksResponse'
         default:
-          description: default
+          description: "default"
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Status'
-  '/planner/tasks/{id}':
+  /planner/tasks/{id}:
     patch:
       operationId: updateTask
       summary: Update task parameters
@@ -60,10 +60,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateTaskRequest'
+                $ref: '#/components/schemas/UpdateTaskRequest'
       responses:
         '200':
-          description: ok
+          description: "ok"
           content:
             application/json:
               schema:
@@ -71,7 +71,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/TasksResponse'
         default:
-          description: default
+          description: "default"
           content:
             application/json:
               schema:
@@ -86,20 +86,21 @@ paths:
           schema:
             type: string
       responses:
-        '200':
-          description: ok
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TasksResponse'
-        default:
-          description: default
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
+          '200':
+            description: "ok"
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/TasksResponse'
+          default:
+            description: "default"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Status'
+
 components:
   schemas:
     UpdateTaskRequest:
@@ -111,34 +112,34 @@ components:
         description:
           type: string
     Task:
-      required:
+        required:
         - id
         - name
         - description
         - status
         - owner_id
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        description:
-          type: string
-        owner_id:
-          type: string
-        status:
-          type: boolean
+        properties:
+          id:
+            type: string
+          name:
+            type: string
+          description:
+            type: string
+          owner_id:
+            type: string
+          status:
+            type: boolean
     TasksResponse:
-      required:
-        - status
-        - tasks
-      properties:
-        tasks:
-          type: array
-          items:
-            $ref: '#/components/schemas/Task'
-        status:
-          $ref: '#/components/schemas/Status'
+        required:
+          - status
+          - tasks
+        properties:
+          tasks:
+            type: array
+            items:
+              $ref: '#/components/schemas/Task'
+          status:
+            $ref: '#/components/schemas/Status'
     TaskIdResponse:
       required:
         - id

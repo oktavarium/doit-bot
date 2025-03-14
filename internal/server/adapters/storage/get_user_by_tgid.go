@@ -13,7 +13,8 @@ import (
 
 func (db *db) GetUserByTgId(ctx context.Context, tg_id int64) (*users.User, error) {
 	var result dbo.User
-	if err := db.users.FindOne(ctx, bson.M{"tg_id": tg_id}).Decode(&result); err != nil {
+	filter := bson.M{"tg_id": tg_id}
+	if err := db.users.FindOne(ctx, filter).Decode(&result); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, users.ErrUserNotFound
 		}

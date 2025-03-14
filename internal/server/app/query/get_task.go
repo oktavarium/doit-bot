@@ -7,7 +7,8 @@ import (
 )
 
 type GetTask struct {
-	TaskId string
+	ActorId string
+	TaskId  string
 }
 
 type getTaskHandler struct {
@@ -23,5 +24,5 @@ func NewGetTaskHandler(domainService *planner.DomainService) GetTaskHandler {
 }
 
 func (h getTaskHandler) Handle(ctx context.Context, cmd GetTask) (*planner.Task, error) {
-	return h.domainService.GetTask(ctx, cmd.TaskId)
+	return h.domainService.GetTask(ctx, cmd.ActorId, cmd.TaskId)
 }

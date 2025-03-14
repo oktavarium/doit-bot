@@ -9,11 +9,10 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func (db *db) UpdateTask(ctx context.Context, task *planner.Task) error {
+func (db *db) UpdateTask(ctx context.Context, actorId string, task *planner.Task) error {
 	dboTask := dbo.FromDomainTask(task)
-	filter := bson.M{"_id": dboTask.DbId}
-	update := bson.M{"$set": dboTask}
-	if _, err := db.tasks.UpdateOne(ctx, filter, update); err != nil {
+	filter := bson.M{"id": dboTask.Id, "owner_id": actorId}
+	if _, err := db.tasks.ReplaceOne(ctx, filter, dboTask); err != nil {
 		return fmt.Errorf("update one: %w", err)
 	}
 
