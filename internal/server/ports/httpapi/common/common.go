@@ -9,13 +9,13 @@ const (
 // Status defines model for Status.
 type Status struct {
 	// Code Error code
-	Code int64 `json:"code"`
+	Code int `json:"code"`
 
 	// Message Error message
 	Message string `json:"message"`
 }
 
-func NewStatusResponse(code int64, message string) Status {
+func NewStatusResponse(code int, message string) Status {
 	return Status{
 		Code:    code,
 		Message: message,

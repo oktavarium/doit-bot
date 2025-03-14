@@ -48,7 +48,7 @@ function App() {
   // Отправка новой задачи
   const handleSend = async () => {
     if (!inputSummary.trim()) return; // Проверка на пустой ввод
-    
+
     try {
       await createTask(inputSummary);
       setInputSummary('');
@@ -62,7 +62,7 @@ function App() {
   // Обработчики для кнопок меню
   const handleComplete = async () => {
     if (selectedRows.length === 0) return;
-    
+
     const selectedTask = tableData.find(task => task.id === selectedRows[0]);
     if (!selectedTask) return;
 
@@ -76,7 +76,7 @@ function App() {
 
   const handleDelete = async () => {
     if (selectedRows.length === 0) return;
-    
+
     try {
       await deleteTask(selectedRows);
       fetchData();
@@ -109,8 +109,8 @@ function App() {
             />
           </div>
           <div className="input-form__button-container">
-            <BasicButton 
-              onClick={handleSend} 
+            <BasicButton
+              onClick={handleSend}
               disabled={isLoading || !inputSummary.trim() || inputSummary.length > 30}
             />
           </div>
@@ -128,7 +128,7 @@ function App() {
           )}
         </div>
       </div>
-      
+
       {selectedRows.length > 0 && (
         <Paper className="bottom-menu" elevation={3}>
           <Button
@@ -148,9 +148,9 @@ function App() {
         </Paper>
       )}
 
-      <Snackbar 
-        open={!!error} 
-        autoHideDuration={3000} 
+      <Snackbar
+        open={!!error}
+        autoHideDuration={3000}
         onClose={() => setError(null)}
       >
         <Alert severity="error" onClose={() => setError(null)}>

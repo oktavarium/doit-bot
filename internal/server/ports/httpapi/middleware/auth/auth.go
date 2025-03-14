@@ -16,9 +16,6 @@ import (
 
 func Middleware(token string, app *app.App) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// We expect passing init data in the Authorization header in the following format:
-		// <auth-type> <auth-data>
-		// <auth-type> must be "tma", and <auth-data> is Telegram Mini Apps init data.
 		authParts := strings.Split(c.GetHeader(common.HeaderAuthorization), " ")
 		if len(authParts) != 2 {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewStatusResponse(http.StatusBadRequest, "wrong authorization scheme"))
@@ -32,23 +29,23 @@ func Middleware(token string, app *app.App) gin.HandlerFunc {
 			// Validate init data. We consider init data sign valid for 1 hour from their
 			// creation moment.
 			if err := initdata.Validate(authData, token, time.Hour); err != nil {
-				c.AbortWithStatusJSON(http.StatusBadRequest, common.NewStatusResponse(http.StatusBadRequest, err.Error()))
+				common.AbortContextWithError(c, common.NewBadRequestError(err))
 				return
 			}
 
 			initData, err := initdata.Parse(authData)
 			if err != nil {
-				c.AbortWithStatusJSON(http.StatusBadRequest, common.NewStatusResponse(http.StatusBadRequest, err.Error()))
+				common.AbortContextWithError(c, common.NewBadRequestError(err))
 				return
 			}
 			user, err := app.Queries.GetUserByTgId.Handle(c, query.GetUserByTgId{TgId: initData.User.ID})
 			if err != nil && !errors.Is(err, doiterr.ErrNotFound) {
-				c.AbortWithStatusJSON(http.StatusInternalServerError, common.NewStatusResponse(http.StatusInternalServerError, err.Error()))
+				common.AbortContextWithError(c, common.NewUnauthorizedError(err))
 				return
 			}
 
 			if errors.Is(err, doiterr.ErrNotFound) {
-				c.AbortWithStatusJSON(http.StatusUnauthorized, common.NewStatusResponse(http.StatusUnauthorized, "user is not registered"))
+				common.AbortContextWithError(c, common.NewUnauthorizedError(errors.New("user is not registered")))
 				return
 			}
 
@@ -57,7 +54,8 @@ func Middleware(token string, app *app.App) gin.HandlerFunc {
 			c.Request = c.Request.WithContext(ctx)
 
 		default:
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewStatusResponse(http.StatusBadRequest, "not supported authentication scheme"))
+			common.AbortContextWithError(c, common.NewBadRequestError(errors.New("not supported authentication scheme")))
+			return
 		}
 	}
 }

@@ -25,7 +25,7 @@ func Middleware() func(c *gin.Context) {
 	limiterStorage := ratelimit.InMemoryStore(
 		&ratelimit.InMemoryOptions{
 			Rate:  limitPerTime,
-			Limit: uint(3),
+			Limit: uint(10),
 		},
 	)
 	rateLimiter := ratelimit.RateLimiter(

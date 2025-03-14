@@ -1,6 +1,7 @@
-package handlers
+package planner
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -8,27 +9,27 @@ import (
 	"github.com/oktavarium/doit-bot/internal/server/ports/httpapi/common"
 )
 
-func (h *Handlers) CreateTask(c *gin.Context) {
+func (p *Planner) CreateTask(c *gin.Context) {
 	actorId, ok := common.ActorIdFromContext(c)
 	if !ok {
-		c.JSON(http.StatusInternalServerError, newStatusResponse(http.StatusInternalServerError, ""))
+		common.ErrorToContext(c, common.NewInternalServerError(errors.New("empty context")))
 		return
 	}
 
 	var request NewTaskRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, newStatusResponse(http.StatusBadRequest, err.Error()))
+		common.ErrorToContext(c, common.NewBadRequestError(err))
 		return
 	}
 
 	cmd := command.CreateTask{
 		OwnerId:     actorId,
 		Name:        request.Name,
-		Description: *request.Description,
+		Description: request.Description,
 	}
 
-	if err := h.app.Commands.CreateTask.Handle(c, cmd); err != nil {
-		c.JSON(http.StatusInternalServerError, newStatusResponse(http.StatusInternalServerError, err.Error()))
+	if err := p.app.Commands.CreateTask.Handle(c, cmd); err != nil {
+		common.ErrorToContext(c, common.NewInternalServerError(err))
 		return
 	}
 

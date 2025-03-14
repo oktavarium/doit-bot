@@ -1,6 +1,6 @@
-package handlers
+package planner
 
-// func (h *Handlers) Register(c *gin.Context) {
+// func (p *Planner) Register(c *gin.Context) {
 // 	initData, ok := common.InitDataFromContext(c)
 // 	if !ok {
 // 		c.JSON(http.StatusInternalServerError, common.NewStatusResponse(http.StatusInternalServerError, ""))

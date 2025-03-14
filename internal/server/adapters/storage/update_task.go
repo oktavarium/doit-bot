@@ -11,7 +11,7 @@ import (
 
 func (db *db) UpdateTask(ctx context.Context, task *planner.Task) error {
 	dboTask := dbo.FromDomainTask(task)
-	filter := bson.M{"_id": dboTask.DbId()}
+	filter := bson.M{"_id": dboTask.DbId}
 	update := bson.M{"$set": dboTask}
 	if _, err := db.tasks.UpdateOne(ctx, filter, update); err != nil {
 		return fmt.Errorf("update one: %w", err)

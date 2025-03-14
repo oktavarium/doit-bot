@@ -9,27 +9,28 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/oktavarium/doit-bot/internal/server/app"
-	"github.com/oktavarium/doit-bot/internal/server/ports/httpapi/handlers"
 	"github.com/oktavarium/doit-bot/internal/server/ports/httpapi/middleware"
+	"github.com/oktavarium/doit-bot/internal/server/ports/httpapi/middleware/auth"
+	"github.com/oktavarium/doit-bot/internal/server/ports/httpapi/planner"
 )
 
 type API struct {
-	router   *gin.Engine
-	endpoint string
-	handlers *handlers.Handlers
+	router     *gin.Engine
+	endpoint   string
+	plannerAPI *planner.Planner
 }
 
 func New(endpoint string, token string, app *app.App) *API {
 	router := gin.Default()
 	router.ContextWithFallback = true
 
-	middleware.Init(router, token, app)
-	handlers := handlers.New(router, token, app)
+	middleware.Init(router, app)
+	plannerAPI := planner.New(router, app, planner.MiddlewareFunc(auth.Middleware(token, app)))
 
 	return &API{
-		router:   router,
-		endpoint: endpoint,
-		handlers: handlers,
+		router:     router,
+		endpoint:   endpoint,
+		plannerAPI: plannerAPI,
 	}
 
 }

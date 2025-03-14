@@ -17,7 +17,7 @@ type db struct {
 
 func New(uri string) (*db, error) {
 	clientOpts := options.Client().ApplyURI(uri)
-
+	fmt.Println(uri)
 	ctx := context.Background()
 	client, err := mongo.Connect(ctx, clientOpts)
 	if err != nil {

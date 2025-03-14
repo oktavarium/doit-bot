@@ -7,7 +7,7 @@ import (
 )
 
 type DeleteTask struct {
-	Id      string
+	TaskId  string
 	ActorId string
 }
 
@@ -27,6 +27,6 @@ func (h deleteTaskHandler) Handle(ctx context.Context, cmd DeleteTask) error {
 	return h.domainService.DeleteTask(
 		ctx,
 		cmd.ActorId,
-		cmd.Id,
+		cmd.TaskId,
 	)
 }

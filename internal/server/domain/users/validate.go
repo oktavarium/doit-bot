@@ -10,6 +10,7 @@ var (
 	ErrBadTgId       = errors.New("bad tg id")
 	ErrEmptyUsername = errors.New("empty username")
 	ErrUserExists    = errors.New("user already exists")
+	ErrUserNotFound  = errors.New("user not found")
 )
 
 func validateTgId(tgId int64) error {

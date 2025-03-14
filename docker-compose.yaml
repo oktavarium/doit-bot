@@ -1,0 +1,22 @@
+version: '3.3'
+services:
+    server:
+        build: ./
+        ports:
+            - 8080:8080
+        container_name: server
+        environment:
+            - BOT_TOKEN=${BOT_TOKEN:?Error}
+            - LISTEN_ADDRESS=0.0.0.0:8080
+            - DB_URI=mongodb://admin:admin@mongo:27017/?directConnection=true
+    mongo:
+        ports:
+            - '27017:27017'
+        restart: always
+        logging:
+            options:
+                max-size: 100mb
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=admin
+            - MONGO_INITDB_ROOT_PASSWORD=admin
+        image: mongo

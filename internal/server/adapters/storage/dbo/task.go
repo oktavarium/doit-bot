@@ -6,55 +6,31 @@ import (
 )
 
 type Task struct {
-	_id         primitive.ObjectID `bson:"_id,omitempty"`
-	id          string             `bson:"id,omitempty"`
-	ownerId     string             `bson:"owner_id,omitempty"`
-	name        string             `bson:"name,omitempty"`
-	description string             `bson:"description,omitempty"`
-	status      bool               `bson:"done,omitempty"`
-}
-
-func (t Task) DbId() primitive.ObjectID {
-	return t._id
-}
-
-func (t Task) Id() string {
-	return t.id
-}
-
-func (t Task) OwnerId() string {
-	return t.ownerId
-}
-
-func (t Task) Name() string {
-	return t.name
-}
-
-func (t Task) Description() string {
-	return t.description
-}
-
-func (t Task) Status() bool {
-	return t.status
+	DbId         primitive.ObjectID `bson:"_id,omitempty"`
+	Id          string             `bson:"id,omitempty"`
+	OwnerId     string             `bson:"owner_id,omitempty"`
+	Name        string             `bson:"name,omitempty"`
+	Description string             `bson:"description,omitempty"`
+	Status      bool               `bson:"done,omitempty"`
 }
 
 func FromDomainTask(dt *planner.Task) Task {
 	return Task{
-		id:          dt.Id(),
-		ownerId:     dt.OwnerId(),
-		name:        dt.Name(),
-		description: dt.Description(),
-		status:      dt.Status(),
+		Id:          dt.Id(),
+		OwnerId:     dt.OwnerId(),
+		Name:        dt.Name(),
+		Description: dt.Description(),
+		Status:      dt.Status(),
 	}
 }
 
 func (t Task) ToDomainTask() (*planner.Task, error) {
 	return planner.RestoreTaskFromDB(
-		t.id,
-		t.ownerId,
-		t.name,
-		t.description,
-		t.status,
+		t.Id,
+		t.OwnerId,
+		t.Name,
+		t.Description,
+		t.Status,
 	)
 }
 

@@ -58,12 +58,12 @@ func (s *DomainService) CreateUser(
 	}
 
 	_, err := s.repo.GetUserByTgId(ctx, tgId)
-	if err != nil && !errors.Is(err, ErrUserExists) {
+	if err != nil && !errors.Is(err, ErrUserNotFound) {
 		return fmt.Errorf("get user by tg id: %w", err)
 	}
 
-	if errors.Is(err, ErrUserExists) {
-		return err
+	if err == nil {
+		return ErrUserExists
 	}
 
 	newId, err := uuid.NewV7()

@@ -9,13 +9,18 @@ import (
 
 func Middleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		slog.Debug(
+		slog.Info(
 			"new request",
-			slog.String("path", c.Request.URL.RawPath),
-			slog.String("mehtod", c.Request.Method),
+			slog.String("path", c.FullPath()),
+			slog.String("method", c.Request.Method),
 			slog.String(common.HeaderAuthorization, c.GetHeader(common.HeaderAuthorization)),
 		)
 
 		c.Next()
+
+		slog.Info(
+			"request ended",
+			slog.Int("status", c.Writer.Status()),
+		)
 	}
 }

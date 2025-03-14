@@ -4,11 +4,10 @@ info:
   description: API for task management
   version: 1.0.0
 paths:
-  /tasks:
+  /planner/tasks:
     post:
       operationId: createTask
       summary: Create a new task
-      description: Creates a new task with the specified parameters.
       requestBody:
         required: true
         content:
@@ -17,13 +16,13 @@ paths:
               $ref: '#/components/schemas/NewTaskRequest'
       responses:
         '201':
-          description: Task created successfully
+          description: ok
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TaskIdResponse'
         default:
-          description: unexpected error
+          description: default
           content:
             application/json:
               schema:
@@ -31,10 +30,9 @@ paths:
     get:
       operationId: getTasks
       summary: Get all tasks
-      description: Gets all actor tasks
       responses:
         '200':
-          description: Tasks received
+          description: ok
           content:
             application/json:
               schema:
@@ -42,52 +40,105 @@ paths:
                 items:
                   $ref: '#/components/schemas/TasksResponse'
         default:
-          description: unexpected error
+          description: default
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  '/planner/tasks/{id}':
+    patch:
+      operationId: updateTask
+      summary: Update task parameters
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTaskRequest'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TasksResponse'
+        default:
+          description: default
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+    delete:
+      operationId: deleteTask
+      summary: Delete task
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TasksResponse'
+        default:
+          description: default
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Status'
 components:
   schemas:
+    UpdateTaskRequest:
+      properties:
+        status:
+          type: boolean
+        name:
+          type: string
+        description:
+          type: string
     Task:
-        required:
+      required:
         - id
         - name
         - description
         - status
         - owner_id
-        properties:
-          id:
-            type: string
-            description: Unique id of the task
-            example: "550e8400-e29b-41d4-a716-446655440002"
-          name:
-            type: string
-            description: Task name
-            example: "Complete the project"
-          description:
-            type: string
-            description: Task description
-            example: "The project must be completed by the end of the week."
-          owner_id:
-            type: string
-            description: ID of the task owner
-            example: "550e8400-e29b-41d4-a716-446655440000"
-          status:
-            type: boolean
-            description: task status
-            example: true
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        owner_id:
+          type: string
+        status:
+          type: boolean
     TasksResponse:
-        required:
-          - status
-          - tasks
-        properties:
-          tasks:
-            type: array
-            items:
-              $ref: '#/components/schemas/Task'
-          status:
-            $ref: '#/components/schemas/Status'
+      required:
+        - status
+        - tasks
+      properties:
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
+        status:
+          $ref: '#/components/schemas/Status'
     TaskIdResponse:
       required:
         - id
@@ -95,22 +146,17 @@ components:
       properties:
         id:
           type: string
-          description: Unique id of the task
-          example: "550e8400-e29b-41d4-a716-446655440002"
         status:
           $ref: '#/components/schemas/Status'
     NewTaskRequest:
       required:
         - name
+        - description
       properties:
         name:
           type: string
-          description: Task name
-          example: "Complete the project"
         description:
           type: string
-          description: Task description
-          example: "The project must be completed by the end of the week."
     Status:
       required:
         - code
@@ -118,10 +164,6 @@ components:
       properties:
         code:
           type: integer
-          format: int64
-          description: Error code
-          example: 200
+          format: int
         message:
           type: string
-          description: Error message
-          example: OK

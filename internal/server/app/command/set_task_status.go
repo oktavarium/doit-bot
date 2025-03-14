@@ -8,8 +8,9 @@ import (
 )
 
 type SetTaskStatus struct {
-	TaskId string
-	Status bool
+	ActorId string
+	TaskId  string
+	Status  bool
 }
 
 type setTaskStatusHandler struct {
