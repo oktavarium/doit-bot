@@ -9,7 +9,6 @@ import (
 
 	"github.com/oktavarium/doit-bot/internal/config"
 	"github.com/oktavarium/doit-bot/internal/server/adapters/storage"
-	"github.com/oktavarium/doit-bot/internal/server/adapters/tgclient"
 	"github.com/oktavarium/doit-bot/internal/server/app"
 	"github.com/oktavarium/doit-bot/internal/server/domain/planner"
 	"github.com/oktavarium/doit-bot/internal/server/domain/users"
@@ -26,10 +25,10 @@ func Run() error {
 	}
 
 	// Init adapters (secondary adapters)
-	tgClient, err := tgclient.New(cfg.GetToken())
-	if err != nil {
-		return fmt.Errorf("create tg client: %w", err)
-	}
+	// tgClient, err := tgclient.New(cfg.GetToken())
+	// if err != nil {
+	// 	return fmt.Errorf("create tg client: %w", err)
+	// }
 
 	storage, err := storage.New(cfg.GetUri())
 	if err != nil {
@@ -40,7 +39,7 @@ func Run() error {
 	plannerDomainService := planner.NewDomainService(storage)
 
 	// Init app
-	app := app.New(tgClient, plannerDomainService, usersDomainService)
+	app := app.New(plannerDomainService, usersDomainService)
 
 	// Init ports (primary adapters)
 	tgAPI, err := tgapi.New(cfg.GetToken(), app)

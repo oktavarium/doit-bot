@@ -1,17 +1,21 @@
 package users
 
 import (
-	"errors"
-
 	"github.com/google/uuid"
+	"github.com/oktavarium/doit-bot/internal/doiterr"
 )
 
-var (
-	ErrBadTgId       = errors.New("bad tg id")
-	ErrEmptyUsername = errors.New("empty username")
-	ErrUserExists    = errors.New("user already exists")
-	ErrUserNotFound  = errors.New("user not found")
-)
+func isUserValid(u *User) error {
+	if u == nil {
+		return ErrEmptyUser
+	}
+
+	if !u.IsValid() {
+		return ErrInvalidUser
+	}
+
+	return nil
+}
 
 func validateTgId(tgId int64) error {
 	if tgId <= 0 {
@@ -36,8 +40,7 @@ func validateId(id string) error {
 
 	_, err := uuid.Parse(id)
 	if err != nil {
-		// TODO: return error in production
-		panic(err)
+		return doiterr.WrapError(ErrInternalError, err)
 	}
 
 	return nil

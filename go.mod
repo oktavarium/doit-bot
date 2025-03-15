@@ -1,8 +1,6 @@
 module github.com/oktavarium/doit-bot
 
-go 1.23.0
-
-toolchain go1.24.0
+go 1.24.0
 
 require (
 	github.com/JGLTechnologies/gin-rate-limit v1.5.4
@@ -13,7 +11,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/kisielk/errcheck v1.9.0
 	github.com/oapi-codegen/runtime v1.1.1
-	github.com/telegram-mini-apps/init-data-golang v1.3.0
+	github.com/telegram-mini-apps/init-data-golang v1.5.0
 	go.mongodb.org/mongo-driver v1.17.3
 	golang.org/x/sync v0.12.0
 	golang.org/x/tools v0.31.0

@@ -1,25 +1,26 @@
 package planner
 
 import (
-	"errors"
-
 	"github.com/google/uuid"
+	"github.com/oktavarium/doit-bot/internal/doiterr"
 )
 
 const (
-	maxTaskNameLength        = 32
-	maxTaskDescriptionLength = 256
+	maxTaskNameLength        = 64
+	maxTaskDescriptionLength = 1024
 )
 
-var (
-	ErrEmptyTask             = errors.New("empty task")
-	ErrBadId                 = errors.New("bad id")
-	ErrEmptyTaskName         = errors.New("empty task name")
-	ErrTooBigTaskName        = errors.New("too big task name")
-	ErrTooBigTaskDescription = errors.New("too big task description")
-	ErrForbidden             = errors.New("forbidden")
-	ErrNothingChaned         = errors.New("nothing changed")
-)
+func isTaskValid(t *Task) error {
+	if t == nil {
+		return ErrEmptyTask
+	}
+
+	if !t.IsValid() {
+		return ErrInvalidTask
+	}
+
+	return nil
+}
 
 func validateName(name string) error {
 	if name == "" {
@@ -47,8 +48,7 @@ func validateId(id string) error {
 
 	_, err := uuid.Parse(id)
 	if err != nil {
-		// TODO: return error in production
-		panic(err)
+		return doiterr.WrapError(ErrInternalError, err)
 	}
 
 	return nil
@@ -57,8 +57,7 @@ func validateId(id string) error {
 func validateOwnerId(id string) error {
 	_, err := uuid.Parse(id)
 	if err != nil {
-		// TODO: return error in production
-		panic(err)
+		return doiterr.WrapError(ErrInternalError, err)
 	}
 
 	return nil

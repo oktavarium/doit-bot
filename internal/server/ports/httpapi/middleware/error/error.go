@@ -13,7 +13,6 @@ func Middleware() gin.HandlerFunc {
 		c.Next()
 
 		if len(c.Errors) > 0 {
-			// Берем первую ошибку
 			err := c.Errors[0]
 
 			slog.Info(
@@ -22,9 +21,9 @@ func Middleware() gin.HandlerFunc {
 				slog.String("error", err.Error()),
 			)
 
-			var plannerError common.PlannerError
-			if errors.As(err, &plannerError) {
-				c.JSON(plannerError.Status, common.NewStatusResponse(plannerError.Status, plannerError.Error()))
+			var Error common.Error
+			if errors.As(err, &Error) {
+				c.JSON(Error.Status, common.NewStatusResponse(Error.Status, Error.Error()))
 			} else {
 				c.JSON(c.Writer.Status(), common.NewStatusResponse(c.Writer.Status(), err.Error()))
 			}
