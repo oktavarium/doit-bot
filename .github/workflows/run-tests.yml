@@ -1,0 +1,59 @@
+name: Run Autotests
+
+on:
+    push:
+      branches:
+        - main 
+    pull_request:
+      branches:
+        - main 
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+    
+        steps:
+            - name: Checkout doit-bot
+              uses: actions/checkout@v3
+              with:
+                repository: oktavarium/doit-bot
+                path: backend
+
+            - name: Checkout autotests code
+              uses: actions/checkout@v3
+              with:
+                repository: DarkBen92/doit-bot-auto-test
+                path: autotests
+
+            - name: Set up Python
+              uses: actions/setup-python@v4
+              with:
+                  python-version: '3.13'
+
+            - name: Install autotests dependencies
+              run: |
+                cd autotests
+                python -m pip install --upgrade pip
+                pip install -r requirements.txt
+            
+            - name: Cache dependencies
+              uses: actions/cache@v3
+              with:
+                path: ~/.cache/pip
+                key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+                restore-keys: |
+                    ${{ runner.os }}-pip-
+                        
+            - name: Install Allure
+              run: |
+                pip install allure-pytest
+
+            - name: Run tests
+              run: |
+               pytest tests/ --alluredir=allure_results
+
+            - name: Upload test results
+              uses: actions/upload-artifact@v4
+              with:
+                name: test-results
+                path: allure_results
