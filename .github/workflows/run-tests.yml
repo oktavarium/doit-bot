@@ -15,9 +15,6 @@ jobs:
         steps:
             - name: Checkout doit-bot
               uses: actions/checkout@v3
-              with:
-                repository: oktavarium/doit-bot
-                path: backend
 
             - name: Checkout autotests code
               uses: actions/checkout@v3
