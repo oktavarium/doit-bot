@@ -3,12 +3,15 @@ package planner
 import "context"
 
 type DomainService interface {
-	CreateTask(
-		ctx context.Context,
+	NewTask(
 		ownerId string,
 		name string,
 		description string,
-	) (string, error)
+	) (*Task, error)
+	SaveTask(
+		ctx context.Context,
+		task *Task,
+	) error
 	GetTasks(ctx context.Context, actorId string) ([]*Task, error)
 	GetTask(ctx context.Context, actorId string, taskId string) (*Task, error)
 	DeleteTask(ctx context.Context, actorId string, taskId string) error

@@ -47,14 +47,12 @@ func Middleware(token string, app *app.App) gin.HandlerFunc {
 				switch {
 				case errors.Is(err, apperr.ErrValidationError):
 					common.AbortContextWithError(c, common.NewBadRequestError(err))
-					return
 				case errors.Is(err, apperr.ErrNotFoundError):
 					common.AbortContextWithError(c, common.NewUnauthorizedError(err))
-					return
 				default:
 					common.AbortContextWithError(c, common.NewInternalServerError(err))
-					return
 				}
+				return
 			}
 
 			ctx := common.InitDataToContext(c.Request.Context(), initData)

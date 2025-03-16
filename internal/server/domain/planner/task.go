@@ -1,6 +1,11 @@
 package planner
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/google/uuid"
+	"github.com/oktavarium/doit-bot/internal/doiterr"
+)
 
 type Task struct {
 	id          string
@@ -9,6 +14,37 @@ type Task struct {
 	description string
 	status      bool
 	_valid      bool
+}
+
+func newTask(
+	ownerId string,
+	name string,
+	description string,
+) (*Task, error) {
+	if err := validateOwnerId(ownerId); err != nil {
+		return nil, fmt.Errorf("validate owner id: %w", err)
+	}
+
+	if err := validateName(name); err != nil {
+		return nil, fmt.Errorf("validate name: %w", err)
+	}
+
+	if err := validateDescription(name); err != nil {
+		return nil, fmt.Errorf("validate description: %w", err)
+	}
+
+	newId, err := generateId()
+	if err != nil {
+		return nil, fmt.Errorf("generate id: %w", err)
+	}
+
+	return &Task{
+		id:          newId,
+		ownerId:     ownerId,
+		name:        name,
+		description: description,
+		_valid:      true,
+	}, nil
 }
 
 func (t *Task) Id() string {
@@ -80,6 +116,15 @@ func (t *Task) SetDescription(actorId string, description string) error {
 
 	t.description = description
 	return nil
+}
+
+func generateId() (string, error) {
+	newId, err := uuid.NewV7()
+	if err != nil {
+		return "", doiterr.WrapError(ErrInternalError, err)
+	}
+
+	return newId.String(), nil
 }
 
 func RestoreTaskFromDB(

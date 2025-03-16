@@ -3,8 +3,6 @@ package planner
 import (
 	"context"
 	"fmt"
-
-	"github.com/google/uuid"
 )
 
 type domainService struct {
@@ -15,42 +13,27 @@ func NewDomainService(repo PlannerRepository) DomainService {
 	return &domainService{repo: repo}
 }
 
-func (s *domainService) CreateTask(
-	ctx context.Context,
+func (s *domainService) NewTask(
 	ownerId string,
 	name string,
 	description string,
-) (string, error) {
-	if err := validateOwnerId(ownerId); err != nil {
-		return "", fmt.Errorf("validate owner id: %w", err)
+) (*Task, error) {
+	return newTask(ownerId, name, description)
+}
+
+func (s *domainService) SaveTask(
+	ctx context.Context,
+	task *Task,
+) error {
+	if err := isTaskValid(task); err != nil {
+		return fmt.Errorf("validate task :%w", err)
 	}
 
-	if err := validateName(name); err != nil {
-		return "", fmt.Errorf("validate name: %w", err)
+	if err := s.repo.CreateTask(ctx, task); err != nil {
+		return fmt.Errorf("create new task: %w", err)
 	}
 
-	if err := validateDescription(name); err != nil {
-		return "", fmt.Errorf("validate description: %w", err)
-	}
-
-	newId, err := uuid.NewV7()
-	if err != nil {
-		return "", fmt.Errorf("generate id: %w", err)
-	}
-
-	newTask := &Task{
-		id:          newId.String(),
-		ownerId:     ownerId,
-		name:        name,
-		description: description,
-		_valid:      true,
-	}
-
-	if err := s.repo.CreateTask(ctx, newTask); err != nil {
-		return "", fmt.Errorf("create new task: %w", err)
-	}
-
-	return newTask.id, nil
+	return nil
 }
 
 func (s *domainService) GetTasks(ctx context.Context, actorId string) ([]*Task, error) {

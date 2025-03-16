@@ -1,6 +1,11 @@
 package users
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/google/uuid"
+	"github.com/oktavarium/doit-bot/internal/doiterr"
+)
 
 type User struct {
 	id       string
@@ -28,6 +33,15 @@ func (u *User) Username() string {
 
 func (u *User) IsValid() bool {
 	return u._valid
+}
+
+func generateId() (string, error) {
+	newId, err := uuid.NewV7()
+	if err != nil {
+		return "", doiterr.WrapError(ErrInternalError, err)
+	}
+
+	return newId.String(), nil
 }
 
 func RestoreUserFromDB(

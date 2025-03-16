@@ -28,7 +28,7 @@ func NewCreateTaskHandler(domainService planner.DomainService) CreateTaskHandler
 }
 
 func (h createTaskHandler) Handle(ctx context.Context, cmd CreateTask) (string, error) {
-	taskId, err := h.domainService.CreateTask(ctx, cmd.OwnerId, cmd.Name, cmd.Description)
+	task, err := h.domainService.NewTask(cmd.OwnerId, cmd.Name, cmd.Description)
 	if err != nil {
 		switch {
 		case errors.Is(err, planner.ErrEmptyTaskName),
@@ -40,5 +40,8 @@ func (h createTaskHandler) Handle(ctx context.Context, cmd CreateTask) (string, 
 			return "", doiterr.WrapError(apperr.ErrInternalError, err)
 		}
 	}
-	return taskId, nil
+	if err := h.domainService.SaveTask(ctx, task); err != nil {
+		return "", doiterr.WrapError(apperr.ErrInternalError, err)
+	}
+	return task.Id(), nil
 }
