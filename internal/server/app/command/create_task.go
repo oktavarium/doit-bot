@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/oktavarium/doit-bot/internal/doiterr"
 	"github.com/oktavarium/doit-bot/internal/server/app/apperr"
 	"github.com/oktavarium/doit-bot/internal/server/domain/planner"
 )
@@ -35,13 +34,13 @@ func (h createTaskHandler) Handle(ctx context.Context, cmd CreateTask) (string, 
 			errors.Is(err, planner.ErrTooBigTaskName),
 			errors.Is(err, planner.ErrTooBigTaskDescription),
 			errors.Is(err, planner.ErrEmptyTaskName):
-			return "", doiterr.WrapError(apperr.ErrValidationError, err)
+			return "", errors.Join(apperr.ErrValidationError, err)
 		default:
-			return "", doiterr.WrapError(apperr.ErrInternalError, err)
+			return "", errors.Join(apperr.ErrInternalError, err)
 		}
 	}
 	if err := h.domainService.SaveTask(ctx, task); err != nil {
-		return "", doiterr.WrapError(apperr.ErrInternalError, err)
+		return "", errors.Join(apperr.ErrInternalError, err)
 	}
 	return task.Id(), nil
 }

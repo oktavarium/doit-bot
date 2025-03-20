@@ -1,8 +1,9 @@
 package users
 
 import (
+	"errors"
+
 	"github.com/google/uuid"
-	"github.com/oktavarium/doit-bot/internal/doiterr"
 )
 
 func isUserValid(u *User) error {
@@ -34,13 +35,9 @@ func validatUsername(username string) error {
 }
 
 func validateId(id string) error {
-	if id == "" {
-		return nil
-	}
-
 	_, err := uuid.Parse(id)
 	if err != nil {
-		return doiterr.WrapError(ErrInternalError, err)
+		return errors.Join(ErrBadId, err)
 	}
 
 	return nil

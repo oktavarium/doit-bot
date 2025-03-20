@@ -1,10 +1,10 @@
 package users
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/oktavarium/doit-bot/internal/doiterr"
 )
 
 type User struct {
@@ -38,7 +38,7 @@ func (u *User) IsValid() bool {
 func generateId() (string, error) {
 	newId, err := uuid.NewV7()
 	if err != nil {
-		return "", doiterr.WrapError(ErrInternalError, err)
+		return "", errors.Join(ErrInternalError, err)
 	}
 
 	return newId.String(), nil
@@ -51,7 +51,7 @@ func RestoreUserFromDB(
 	username string,
 ) (*User, error) {
 	if err := validateId(id); err != nil {
-		return nil, fmt.Errorf("validate task id: %w", err)
+		return nil, fmt.Errorf("validate user id: %w", err)
 	}
 
 	if err := validateTgId(tgId); err != nil {

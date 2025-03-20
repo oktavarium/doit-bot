@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/oktavarium/doit-bot/internal/doiterr"
 	"github.com/oktavarium/doit-bot/internal/server/app/apperr"
 	"github.com/oktavarium/doit-bot/internal/server/domain/planner"
 )
@@ -31,11 +30,11 @@ func (h getTaskHandler) Handle(ctx context.Context, cmd GetTask) (*planner.Task,
 	if err != nil {
 		switch {
 		case errors.Is(err, planner.ErrBadId):
-			return nil, doiterr.WrapError(apperr.ErrValidationError, err)
+			return nil, errors.Join(apperr.ErrValidationError, err)
 		case errors.Is(err, planner.ErrTaskNotFound):
-			return nil, doiterr.WrapError(apperr.ErrNotFoundError, err)
+			return nil, errors.Join(apperr.ErrNotFoundError, err)
 		default:
-			return nil, doiterr.WrapError(apperr.ErrInternalError, err)
+			return nil, errors.Join(apperr.ErrInternalError, err)
 		}
 	}
 	return task, nil

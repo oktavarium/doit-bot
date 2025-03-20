@@ -1,8 +1,9 @@
 package planner
 
 import (
+	"errors"
+
 	"github.com/google/uuid"
-	"github.com/oktavarium/doit-bot/internal/doiterr"
 )
 
 const (
@@ -42,13 +43,9 @@ func validateDescription(description string) error {
 }
 
 func validateId(id string) error {
-	if id == "" {
-		return nil
-	}
-
 	_, err := uuid.Parse(id)
 	if err != nil {
-		return doiterr.WrapError(ErrInternalError, err)
+		return errors.Join(ErrBadId, err)
 	}
 
 	return nil
@@ -57,7 +54,7 @@ func validateId(id string) error {
 func validateOwnerId(id string) error {
 	_, err := uuid.Parse(id)
 	if err != nil {
-		return doiterr.WrapError(ErrInternalError, err)
+		return errors.Join(ErrInternalError, err)
 	}
 
 	return nil

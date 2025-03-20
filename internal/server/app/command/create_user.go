@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/oktavarium/doit-bot/internal/doiterr"
 	"github.com/oktavarium/doit-bot/internal/server/app/apperr"
 	"github.com/oktavarium/doit-bot/internal/server/domain/users"
 )
@@ -32,9 +31,9 @@ func (h createUserHandler) Handle(ctx context.Context, cmd CreateUser) error {
 		switch {
 		case errors.Is(err, users.ErrEmptyUsername),
 			errors.Is(err, users.ErrBadTgId):
-			return doiterr.WrapError(apperr.ErrValidationError, err)
+			return errors.Join(apperr.ErrValidationError, err)
 		default:
-			return doiterr.WrapError(apperr.ErrInternalError, err)
+			return errors.Join(apperr.ErrInternalError, err)
 		}
 	}
 	return nil

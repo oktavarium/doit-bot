@@ -1,10 +1,10 @@
 package planner
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/oktavarium/doit-bot/internal/doiterr"
 )
 
 type Task struct {
@@ -121,7 +121,7 @@ func (t *Task) SetDescription(actorId string, description string) error {
 func generateId() (string, error) {
 	newId, err := uuid.NewV7()
 	if err != nil {
-		return "", doiterr.WrapError(ErrInternalError, err)
+		return "", errors.Join(ErrInternalError, err)
 	}
 
 	return newId.String(), nil

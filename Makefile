@@ -24,3 +24,6 @@ dc-rebuild:
 
 dc-up-mongo:
 	docker compose up mongo
+
+test:
+	go test -cover ./...

@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/oktavarium/doit-bot/internal/doiterr"
 	"github.com/oktavarium/doit-bot/internal/server/app/apperr"
 	"github.com/oktavarium/doit-bot/internal/server/domain/users"
 )
@@ -31,11 +30,11 @@ func (h getUserByTgIdHandler) Handle(ctx context.Context, cmd GetUserByTgId) (*u
 		if err != nil {
 			switch {
 			case errors.Is(err, users.ErrBadTgId):
-				return nil, doiterr.WrapError(apperr.ErrValidationError, err)
+				return nil, errors.Join(apperr.ErrValidationError, err)
 			case errors.Is(err, users.ErrUserNotFound):
-				return nil, doiterr.WrapError(apperr.ErrNotFoundError, err)
+				return nil, errors.Join(apperr.ErrNotFoundError, err)
 			default:
-				return nil, doiterr.WrapError(apperr.ErrInternalError, err)
+				return nil, errors.Join(apperr.ErrInternalError, err)
 			}
 		}
 	}

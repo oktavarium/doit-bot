@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/oktavarium/doit-bot/internal/doiterr"
 	"github.com/oktavarium/doit-bot/internal/server/adapters/storage/dbo"
 	"github.com/oktavarium/doit-bot/internal/server/domain/planner"
 	"go.mongodb.org/mongo-driver/bson"
@@ -19,7 +18,7 @@ func (db *db) GetTask(ctx context.Context, actorId string, taskId string) (*plan
 		case errors.Is(err, mongo.ErrNoDocuments):
 			return nil, planner.ErrTaskNotFound
 		default:
-			return nil, doiterr.WrapError(planner.ErrInfrastructureError, err)
+			return nil, errors.Join(planner.ErrInfrastructureError, err)
 		}
 	}
 

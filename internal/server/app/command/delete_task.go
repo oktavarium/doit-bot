@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/oktavarium/doit-bot/internal/doiterr"
 	"github.com/oktavarium/doit-bot/internal/server/app/apperr"
 	"github.com/oktavarium/doit-bot/internal/server/domain/planner"
 )
@@ -30,11 +29,11 @@ func (h deleteTaskHandler) Handle(ctx context.Context, cmd DeleteTask) error {
 	if err := h.domainService.DeleteTask(ctx, cmd.ActorId, cmd.TaskId); err != nil {
 		switch {
 		case errors.Is(err, planner.ErrBadId):
-			return doiterr.WrapError(apperr.ErrValidationError, err)
+			return errors.Join(apperr.ErrValidationError, err)
 		case errors.Is(err, planner.ErrTaskNotFound):
-			return doiterr.WrapError(apperr.ErrNotFoundError, err)
+			return errors.Join(apperr.ErrNotFoundError, err)
 		default:
-			return doiterr.WrapError(apperr.ErrInternalError, err)
+			return errors.Join(apperr.ErrInternalError, err)
 		}
 	}
 	return nil

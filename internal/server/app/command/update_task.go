@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/oktavarium/doit-bot/internal/doiterr"
 	"github.com/oktavarium/doit-bot/internal/server/app/apperr"
 	"github.com/oktavarium/doit-bot/internal/server/domain/planner"
 )
@@ -34,11 +33,11 @@ func (h updateTaskHandler) Handle(ctx context.Context, cmd UpdateTask) error {
 	if err != nil {
 		switch {
 		case errors.Is(err, planner.ErrBadId):
-			return doiterr.WrapError(apperr.ErrValidationError, err)
+			return errors.Join(apperr.ErrValidationError, err)
 		case errors.Is(err, planner.ErrTaskNotFound):
-			return doiterr.WrapError(apperr.ErrNotFoundError, err)
+			return errors.Join(apperr.ErrNotFoundError, err)
 		default:
-			return doiterr.WrapError(apperr.ErrInternalError, err)
+			return errors.Join(apperr.ErrInternalError, err)
 		}
 	}
 
@@ -52,11 +51,11 @@ func (h updateTaskHandler) Handle(ctx context.Context, cmd UpdateTask) error {
 		if err := task.SetStatus(cmd.ActorId, *cmd.Status); err != nil {
 			switch {
 			case errors.Is(err, planner.ErrForbidden):
-				return doiterr.WrapError(apperr.ErrForbidden, err)
+				return errors.Join(apperr.ErrForbidden, err)
 			case errors.Is(err, planner.ErrNothingChaned):
 				statusChanged = false
 			default:
-				return doiterr.WrapError(apperr.ErrInternalError, err)
+				return errors.Join(apperr.ErrInternalError, err)
 			}
 		} else {
 			statusChanged = true
@@ -67,13 +66,13 @@ func (h updateTaskHandler) Handle(ctx context.Context, cmd UpdateTask) error {
 		if err := task.SetName(cmd.ActorId, *cmd.Name); err != nil {
 			switch {
 			case errors.Is(err, planner.ErrBadId):
-				return doiterr.WrapError(apperr.ErrValidationError, err)
+				return errors.Join(apperr.ErrValidationError, err)
 			case errors.Is(err, planner.ErrForbidden):
-				return doiterr.WrapError(apperr.ErrForbidden, err)
+				return errors.Join(apperr.ErrForbidden, err)
 			case errors.Is(err, planner.ErrNothingChaned):
 				nameChanged = false
 			default:
-				return doiterr.WrapError(apperr.ErrInternalError, err)
+				return errors.Join(apperr.ErrInternalError, err)
 			}
 		} else {
 			nameChanged = true
@@ -84,13 +83,13 @@ func (h updateTaskHandler) Handle(ctx context.Context, cmd UpdateTask) error {
 		if err := task.SetDescription(cmd.ActorId, *cmd.Description); err != nil {
 			switch {
 			case errors.Is(err, planner.ErrBadId):
-				return doiterr.WrapError(apperr.ErrValidationError, err)
+				return errors.Join(apperr.ErrValidationError, err)
 			case errors.Is(err, planner.ErrForbidden):
-				return doiterr.WrapError(apperr.ErrForbidden, err)
+				return errors.Join(apperr.ErrForbidden, err)
 			case errors.Is(err, planner.ErrNothingChaned):
 				descriptionChanged = false
 			default:
-				return doiterr.WrapError(apperr.ErrInternalError, err)
+				return errors.Join(apperr.ErrInternalError, err)
 			}
 		} else {
 			descriptionChanged = true
@@ -103,11 +102,11 @@ func (h updateTaskHandler) Handle(ctx context.Context, cmd UpdateTask) error {
 			case errors.Is(err, planner.ErrBadId),
 				errors.Is(err, planner.ErrEmptyTask),
 				errors.Is(err, planner.ErrInvalidTask):
-				return doiterr.WrapError(apperr.ErrValidationError, err)
+				return errors.Join(apperr.ErrValidationError, err)
 			case errors.Is(err, planner.ErrTaskNotFound):
-				return doiterr.WrapError(apperr.ErrNotFoundError, err)
+				return errors.Join(apperr.ErrNotFoundError, err)
 			default:
-				return doiterr.WrapError(apperr.ErrInternalError, err)
+				return errors.Join(apperr.ErrInternalError, err)
 			}
 		}
 	}

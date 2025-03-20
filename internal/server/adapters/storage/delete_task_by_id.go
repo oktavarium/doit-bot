@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/oktavarium/doit-bot/internal/doiterr"
 	"github.com/oktavarium/doit-bot/internal/server/domain/planner"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -18,7 +17,7 @@ func (db *db) DeleteTask(ctx context.Context, actorId string, taskId string) err
 		case errors.Is(err, mongo.ErrNoDocuments):
 			return planner.ErrTaskNotFound
 		default:
-			return doiterr.WrapError(planner.ErrInfrastructureError, err)
+			return errors.Join(planner.ErrInfrastructureError, err)
 		}
 	}
 
