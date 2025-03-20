@@ -25,6 +25,8 @@ func FromAppError(err error) Error {
 		return NewBadRequestError(err)
 	case errors.Is(err, apperr.ErrForbidden):
 		return NewForbiddenError(err)
+	case errors.Is(err, apperr.ErrAlreadyExistsError):
+		return NewConflictError(err)
 	default:
 		return NewInternalServerError(err)
 	}
@@ -61,6 +63,13 @@ func NewInternalServerError(err error) Error {
 func NewNotFoundError(err error) Error {
 	return Error{
 		Status: http.StatusNotFound,
+		Err:    err,
+	}
+}
+
+func NewConflictError(err error) Error {
+	return Error{
+		Status: http.StatusConflict,
 		Err:    err,
 	}
 }

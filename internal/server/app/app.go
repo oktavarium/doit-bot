@@ -1,6 +1,8 @@
 package app
 
 import (
+	"github.com/oktavarium/doit-bot/internal/server/app/admincommand"
+	"github.com/oktavarium/doit-bot/internal/server/app/adminquery"
 	"github.com/oktavarium/doit-bot/internal/server/app/command"
 	"github.com/oktavarium/doit-bot/internal/server/app/query"
 	"github.com/oktavarium/doit-bot/internal/server/domain/planner"
@@ -8,8 +10,18 @@ import (
 )
 
 type App struct {
-	Commands commands
-	Queries  queries
+	AdminQueries  adminQueries
+	AdminCommands adminCommands
+	Commands      commands
+	Queries       queries
+}
+
+type adminCommands struct {
+	CreateUser admincommand.CreateUserHandler
+}
+
+type adminQueries struct {
+	IsAdmin adminquery.IsAdminHandler
 }
 
 type commands struct {
@@ -26,10 +38,17 @@ type queries struct {
 }
 
 func New(
+	admins []int64,
 	plannerDomainSerice planner.DomainService,
 	usersDomainService users.DomainService,
 ) *App {
 	return &App{
+		AdminCommands: adminCommands{
+			CreateUser: admincommand.NewCreateUserHandler(admins, usersDomainService),
+		},
+		AdminQueries: adminQueries{
+			IsAdmin: adminquery.NewIsAdminHandler(admins),
+		},
 		Commands: commands{
 			CreateTask: command.NewCreateTaskHandler(plannerDomainSerice),
 			CreateUser: command.NewCreateUserHandler(usersDomainService),

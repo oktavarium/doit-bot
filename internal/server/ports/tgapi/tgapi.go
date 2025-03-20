@@ -20,13 +20,16 @@ func New(token string, app *app.App) (*TGAPI, error) {
 		bot.WithDefaultHandler(handlers.DefaultHandler),
 	}
 
-	bot, err := bot.New(token, opts...)
+	b, err := bot.New(token, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("create tg bot: %w", err)
 	}
 
+	b.RegisterHandler(bot.HandlerTypeMessageText, "/start", bot.MatchTypeExact, handlers.StartHandler)
+	b.RegisterHandler(bot.HandlerTypeMessageText, "/admin", bot.MatchTypePrefix, handlers.AdminHandler)
+
 	return &TGAPI{
-		bot:      bot,
+		bot:      b,
 		handlers: handlers,
 	}, nil
 }

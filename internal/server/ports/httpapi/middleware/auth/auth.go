@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	"strconv"
 	"strings"
 	"time"
 
@@ -29,6 +30,29 @@ func Middleware(token string, app *app.App) gin.HandlerFunc {
 		authType := authParts[0]
 		authData := authParts[1]
 		switch authType {
+		case common.AuthTypeDebug:
+			tgId, err := strconv.ParseInt(authData, 10, 64)
+			if err != nil {
+				common.AbortContextWithError(c, common.NewBadRequestError(err))
+				return
+			}
+
+			user, err := app.Queries.GetUserByTgId.Handle(c, query.GetUserByTgId{TgId: tgId})
+			if err != nil {
+				switch {
+				case errors.Is(err, apperr.ErrValidationError):
+					common.AbortContextWithError(c, common.NewBadRequestError(err))
+				case errors.Is(err, apperr.ErrNotFoundError):
+					common.AbortContextWithError(c, common.NewUnauthorizedError(err))
+				default:
+					common.AbortContextWithError(c, common.NewInternalServerError(err))
+				}
+				return
+			}
+
+			ctx := common.ActorIdToContext(c.Request.Context(), user.Id())
+			c.Request = c.Request.WithContext(ctx)
+
 		case common.AuthTypeTelegram:
 			// Validate init data. We consider init data sign valid for 1 hour from their
 			// creation moment.

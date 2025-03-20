@@ -39,7 +39,7 @@ func Run() error {
 	plannerDomainService := planner.NewDomainService(storage)
 
 	// Init app
-	app := app.New(plannerDomainService, usersDomainService)
+	app := app.New(cfg.GetAdmins(), plannerDomainService, usersDomainService)
 
 	// Init ports (primary adapters)
 	tgAPI, err := tgapi.New(cfg.GetToken(), app)
