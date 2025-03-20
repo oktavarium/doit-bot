@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"strconv"
 	"strings"
@@ -49,7 +50,16 @@ func (h *Handlers) AdminHandler(ctx context.Context, b *bot.Bot, update *models.
 			},
 		); err != nil {
 			slog.Error("create user", slog.Any("error", err))
+			b.SendMessage(ctx, &bot.SendMessageParams{
+				ChatID: update.Message.Chat.ID,
+				Text:   fmt.Sprintf("Error creating user: %s", err.Error()),
+			})
+			return
 		}
+		b.SendMessage(ctx, &bot.SendMessageParams{
+			ChatID: update.Message.Chat.ID,
+			Text:   "User created",
+		})
 	default:
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: update.Message.Chat.ID,
