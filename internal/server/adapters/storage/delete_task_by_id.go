@@ -2,16 +2,23 @@ package storage
 
 import (
 	"context"
-	"fmt"
+	"errors"
 
+	"github.com/oktavarium/doit-bot/internal/server/domain/planner"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func (db *db) DeleteTask(ctx context.Context, actorId string, taskId string) error {
 	filter := bson.M{"id": taskId, "owner_id": actorId}
 
 	if _, err := db.tasks.DeleteOne(ctx, filter); err != nil {
-		return fmt.Errorf("delete one: %w", err)
+		switch {
+		case errors.Is(err, mongo.ErrNoDocuments):
+			return planner.ErrTaskNotFound
+		default:
+			return errors.Join(planner.ErrInfrastructureError, err)
+		}
 	}
 
 	return nil

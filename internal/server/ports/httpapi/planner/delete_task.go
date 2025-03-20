@@ -28,9 +28,9 @@ func (p *Planner) DeleteTask(c *gin.Context, id string) {
 	}
 
 	if err := p.app.Commands.DeleteTask.Handle(c, cmd); err != nil {
-		common.ErrorToContext(c, common.NewInternalServerError(err))
+		common.ErrorToContext(c, common.FromAppError(err))
 		return
 	}
 
-	c.JSON(http.StatusOK, TaskIdResponse{Id: "", Status: newStatusResponse(http.StatusOK, "")})
+	c.JSON(http.StatusOK, newStatusResponse(http.StatusOK, ""))
 }

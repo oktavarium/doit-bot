@@ -22,7 +22,7 @@ func (p *Planner) GetTasks(c *gin.Context) {
 
 	tasks, err := p.app.Queries.GetTasks.Handle(c, cmd)
 	if err != nil {
-		common.ErrorToContext(c, common.NewInternalServerError(err))
+		common.ErrorToContext(c, common.FromAppError(err))
 		return
 	}
 

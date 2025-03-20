@@ -3,9 +3,7 @@ package storage
 import (
 	"context"
 	"errors"
-	"fmt"
 
-	"github.com/oktavarium/doit-bot/internal/doiterr"
 	"github.com/oktavarium/doit-bot/internal/server/adapters/storage/dbo"
 	"github.com/oktavarium/doit-bot/internal/server/domain/planner"
 	"go.mongodb.org/mongo-driver/bson"
@@ -16,10 +14,12 @@ func (db *db) GetTask(ctx context.Context, actorId string, taskId string) (*plan
 	var result dbo.Task
 	filter := bson.M{"id": taskId, "owner_id": actorId}
 	if err := db.tasks.FindOne(ctx, filter).Decode(&result); err != nil {
-		if errors.Is(err, mongo.ErrNoDocuments) {
-			return nil, doiterr.ErrNotFound
+		switch {
+		case errors.Is(err, mongo.ErrNoDocuments):
+			return nil, planner.ErrTaskNotFound
+		default:
+			return nil, errors.Join(planner.ErrInfrastructureError, err)
 		}
-		return nil, fmt.Errorf("find task: %w", err)
 	}
 
 	return result.ToDomainTask()

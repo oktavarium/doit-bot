@@ -21,19 +21,18 @@ func (p *Planner) UpdateTask(c *gin.Context, id string) {
 		common.ErrorToContext(c, common.NewBadRequestError(err))
 		return
 	}
-
-	if request.Status != nil {
-		cmd := command.SetTaskStatus{
-			ActorId: actorId,
-			TaskId:  id,
-			Status:  *request.Status,
-		}
-
-		if err := p.app.Commands.SetTaskStatus.Handle(c, cmd); err != nil {
-			common.ErrorToContext(c, common.NewInternalServerError(err))
-			return
-		}
-
-		c.JSON(http.StatusOK, TaskIdResponse{Id: "", Status: newStatusResponse(http.StatusOK, "")})
+	cmd := command.UpdateTask{
+		ActorId:     actorId,
+		Status:      request.Status,
+		Name:        request.Name,
+		Description: request.Description,
 	}
+
+	if err := p.app.Commands.UpdateTask.Handle(c, cmd); err != nil {
+		common.ErrorToContext(c, common.FromAppError(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, newStatusResponse(http.StatusOK, ""))
+
 }

@@ -6,12 +6,17 @@ import (
 	"github.com/google/uuid"
 )
 
-var (
-	ErrBadTgId       = errors.New("bad tg id")
-	ErrEmptyUsername = errors.New("empty username")
-	ErrUserExists    = errors.New("user already exists")
-	ErrUserNotFound  = errors.New("user not found")
-)
+func isUserValid(u *User) error {
+	if u == nil {
+		return ErrEmptyUser
+	}
+
+	if !u.IsValid() {
+		return ErrInvalidUser
+	}
+
+	return nil
+}
 
 func validateTgId(tgId int64) error {
 	if tgId <= 0 {
@@ -30,14 +35,9 @@ func validatUsername(username string) error {
 }
 
 func validateId(id string) error {
-	if id == "" {
-		return nil
-	}
-
 	_, err := uuid.Parse(id)
 	if err != nil {
-		// TODO: return error in production
-		panic(err)
+		return errors.Join(ErrBadId, err)
 	}
 
 	return nil

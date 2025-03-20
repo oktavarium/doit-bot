@@ -31,7 +31,7 @@ paths:
       operationId: getTasks
       summary: Get all tasks
       responses:
-        '200':
+        '201':
           description: "ok"
           content:
             application/json:
@@ -69,7 +69,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/TasksResponse'
+                  $ref: '#/components/schemas/Status'
         default:
           description: "default"
           content:
@@ -93,7 +93,7 @@ paths:
                 schema:
                   type: array
                   items:
-                    $ref: '#/components/schemas/TasksResponse'
+                    $ref: '#/components/schemas/Status'
           default:
             description: "default"
             content:

@@ -28,10 +28,11 @@ func (p *Planner) CreateTask(c *gin.Context) {
 		Description: request.Description,
 	}
 
-	if err := p.app.Commands.CreateTask.Handle(c, cmd); err != nil {
-		common.ErrorToContext(c, common.NewInternalServerError(err))
+	taskId, err := p.app.Commands.CreateTask.Handle(c, cmd)
+	if err != nil {
+		common.ErrorToContext(c, common.FromAppError(err))
 		return
 	}
 
-	c.JSON(http.StatusOK, TaskIdResponse{Id: "", Status: newStatusResponse(http.StatusOK, "")})
+	c.JSON(http.StatusCreated, TaskIdResponse{Id: taskId, Status: newStatusResponse(http.StatusCreated, "")})
 }

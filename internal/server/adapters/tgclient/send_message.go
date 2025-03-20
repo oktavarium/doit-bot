@@ -3,7 +3,6 @@ package tgclient
 import (
 	"context"
 	"fmt"
-	"log/slog"
 
 	"github.com/go-telegram/bot"
 	"github.com/oktavarium/doit-bot/internal/doiterr"
@@ -27,7 +26,6 @@ func (c *client) SendMessage(
 	)
 
 	if err != nil {
-		slog.Error("error sending message", slog.Any("error", err))
 		return fmt.Errorf("send message: %w", err)
 	}
 

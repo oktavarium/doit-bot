@@ -2,7 +2,7 @@ package storage
 
 import (
 	"context"
-	"fmt"
+	"errors"
 
 	"github.com/oktavarium/doit-bot/internal/server/adapters/storage/dbo"
 	"github.com/oktavarium/doit-bot/internal/server/domain/planner"
@@ -13,12 +13,12 @@ func (db *db) GetTasks(ctx context.Context, actorId string) ([]*planner.Task, er
 	filter := bson.M{"owner_id": actorId}
 	cursor, err := db.tasks.Find(ctx, filter)
 	if err != nil {
-		return nil, fmt.Errorf("find tasks: %w", err)
+		return nil, errors.Join(planner.ErrInfrastructureError, err)
 	}
 
 	var tasks []dbo.Task
 	if err = cursor.All(ctx, &tasks); err != nil {
-		return nil, fmt.Errorf("read cursor: %w", err)
+		return nil, errors.Join(planner.ErrInfrastructureError, err)
 	}
 
 	result, err := dbo.TasksToDomainTasks(tasks)
