@@ -1,4 +1,4 @@
-package command
+package admincommand
 
 import (
 	"context"
@@ -9,25 +9,37 @@ import (
 )
 
 type CreateUser struct {
-	TgId     int64
-	ChatTgId int64
-	Username string
+	ActorTgId int64
+	UserTgId  int64
+	ChatTgId  int64
+	Username  string
 }
 
 type createUserHandler struct {
+	adminsMap     map[int64]struct{}
 	domainService users.DomainService
 }
 
 type CreateUserHandler CommandHandler[CreateUser]
 
-func NewCreateUserHandler(domainService users.DomainService) CreateUserHandler {
+func NewCreateUserHandler(admins []int64, domainService users.DomainService) CreateUserHandler {
+	adminsMap := make(map[int64]struct{})
+	for _, admin := range admins {
+		adminsMap[admin] = struct{}{}
+	}
 	return createUserHandler{
 		domainService: domainService,
+		adminsMap:     adminsMap,
 	}
 }
 
 func (h createUserHandler) Handle(ctx context.Context, cmd CreateUser) error {
-	if err := h.domainService.CreateUser(ctx, cmd.TgId, cmd.ChatTgId, cmd.Username); err != nil {
+	_, ok := h.adminsMap[cmd.ActorTgId]
+	if !ok {
+		return apperr.ErrForbidden
+	}
+
+	if err := h.domainService.CreateUser(ctx, cmd.UserTgId, cmd.ChatTgId, cmd.Username); err != nil {
 		switch {
 		case errors.Is(err, users.ErrEmptyUsername),
 			errors.Is(err, users.ErrBadTgId):
