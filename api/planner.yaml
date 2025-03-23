@@ -78,7 +78,7 @@ paths:
                 $ref: '#/components/schemas/Status'
     delete:
       operationId: deleteList
-      summary: Delete task
+      summary: Delete list
       parameters:
         - name: id
           in: path
@@ -127,7 +127,7 @@ paths:
       operationId: getTasks
       summary: Get all tasks
       parameters:
-        - name: listId
+        - name: list_id
           in: query
           description: get tasks from list
           schema:

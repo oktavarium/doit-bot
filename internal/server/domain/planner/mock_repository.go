@@ -105,6 +105,21 @@ func (mr *MockPlannerRepositoryMockRecorder) GetList(arg0, arg1, arg2 interface{
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetList", reflect.TypeOf((*MockPlannerRepository)(nil).GetList), arg0, arg1, arg2)
 }
 
+// GetListTasks mocks base method.
+func (m *MockPlannerRepository) GetListTasks(arg0 context.Context, arg1, arg2 string) ([]*Task, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetListTasks", arg0, arg1, arg2)
+	ret0, _ := ret[0].([]*Task)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetListTasks indicates an expected call of GetListTasks.
+func (mr *MockPlannerRepositoryMockRecorder) GetListTasks(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetListTasks", reflect.TypeOf((*MockPlannerRepository)(nil).GetListTasks), arg0, arg1, arg2)
+}
+
 // GetLists mocks base method.
 func (m *MockPlannerRepository) GetLists(arg0 context.Context, arg1 string) ([]*List, error) {
 	m.ctrl.T.Helper()

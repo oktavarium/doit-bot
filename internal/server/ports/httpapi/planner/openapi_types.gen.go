@@ -83,7 +83,7 @@ type UpdateTaskRequest struct {
 // GetTasksParams defines parameters for GetTasks.
 type GetTasksParams struct {
 	// ListId get tasks from list
-	ListId *string `form:"listId,omitempty" json:"listId,omitempty"`
+	ListId *string `form:"list_id,omitempty" json:"list_id,omitempty"`
 }
 
 // CreateListJSONRequestBody defines body for CreateList for application/json ContentType.

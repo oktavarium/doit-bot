@@ -19,7 +19,7 @@ type ServerInterface interface {
 	// Create a new list
 	// (POST /planner/lists)
 	CreateList(c *gin.Context)
-	// Delete task
+	// Delete list
 	// (DELETE /planner/lists/{id})
 	DeleteList(c *gin.Context, id string)
 	// Update list parameters
@@ -130,11 +130,11 @@ func (siw *ServerInterfaceWrapper) GetTasks(c *gin.Context) {
 	// Parameter object where we will unmarshal all parameters from the context
 	var params GetTasksParams
 
-	// ------------- Optional query parameter "listId" -------------
+	// ------------- Optional query parameter "list_id" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "listId", c.Request.URL.Query(), &params.ListId)
+	err = runtime.BindQueryParameter("form", true, false, "list_id", c.Request.URL.Query(), &params.ListId)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter listId: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter list_id: %w", err), http.StatusBadRequest)
 		return
 	}
 
