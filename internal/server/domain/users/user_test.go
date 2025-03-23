@@ -86,7 +86,7 @@ func TestRestoreUserFromDB(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			got, err := RestoreUserFromDB(tt.args.id, tt.args.tgId, tt.args.chatTgId, tt.args.username)
-			if err == nil {
+			if tt.wantErr == nil {
 				assert.NoError(t, err)
 			} else {
 				assert.ErrorIs(t, err, tt.wantErr)

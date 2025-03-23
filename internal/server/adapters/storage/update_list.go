@@ -10,10 +10,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func (db *db) UpdateTask(ctx context.Context, task *planner.Task) error {
-	dboTask := dbo.FromDomainTask(task)
-	filter := bson.M{"id": dboTask.Id}
-	if _, err := db.tasks.ReplaceOne(ctx, filter, dboTask); err != nil {
+func (db *db) UpdateList(ctx context.Context, list *planner.List) error {
+	dboList := dbo.FromDomainList(list)
+	filter := bson.M{"id": dboList.Id}
+	if _, err := db.lists.ReplaceOne(ctx, filter, dboList); err != nil {
 		switch {
 		case errors.Is(err, mongo.ErrNoDocuments):
 			return planner.ErrNotFound

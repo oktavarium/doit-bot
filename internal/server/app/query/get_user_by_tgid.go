@@ -2,7 +2,6 @@ package query
 
 import (
 	"context"
-	"errors"
 
 	"github.com/oktavarium/doit-bot/internal/server/app/apperr"
 	"github.com/oktavarium/doit-bot/internal/server/domain/users"
@@ -27,16 +26,7 @@ func NewGetUserByTgIdHandler(domainService users.DomainService) GetUserByTgIdHan
 func (h getUserByTgIdHandler) Handle(ctx context.Context, cmd GetUserByTgId) (*users.User, error) {
 	user, err := h.domainService.GetUserByTgId(ctx, cmd.TgId)
 	if err != nil {
-		if err != nil {
-			switch {
-			case errors.Is(err, users.ErrBadTgId):
-				return nil, errors.Join(apperr.ErrValidationError, err)
-			case errors.Is(err, users.ErrUserNotFound):
-				return nil, errors.Join(apperr.ErrNotFoundError, err)
-			default:
-				return nil, errors.Join(apperr.ErrInternalError, err)
-			}
-		}
+		return nil, apperr.FromUsersError(err)
 	}
 
 	return user, nil

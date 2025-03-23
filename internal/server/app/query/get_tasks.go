@@ -2,7 +2,6 @@ package query
 
 import (
 	"context"
-	"errors"
 
 	"github.com/oktavarium/doit-bot/internal/server/app/apperr"
 	"github.com/oktavarium/doit-bot/internal/server/domain/planner"
@@ -10,6 +9,7 @@ import (
 
 type GetTasks struct {
 	UserId string
+	ListId *string
 }
 
 type getTasksHandler struct {
@@ -25,17 +25,20 @@ func NewGetTaskskHandler(domainService planner.DomainService) GetTasksHandler {
 }
 
 func (h getTasksHandler) Handle(ctx context.Context, cmd GetTasks) ([]*planner.Task, error) {
-	tasks, err := h.domainService.GetTasks(ctx, cmd.UserId)
-	if err != nil {
+	if cmd.ListId == nil {
+		tasks, err := h.domainService.GetTasks(ctx, cmd.UserId)
 		if err != nil {
-			switch {
-			case errors.Is(err, planner.ErrBadId):
-				return nil, errors.Join(apperr.ErrValidationError, err)
-			default:
-				return nil, errors.Join(apperr.ErrInternalError, err)
-			}
+			return nil, apperr.FromPlannerError(err)
 		}
+
+		return tasks, nil
+	}
+
+	tasks, err := h.domainService.GetListTasks(ctx, cmd.UserId, *cmd.ListId)
+	if err != nil {
+		return nil, apperr.FromPlannerError(err)
 	}
 
 	return tasks, nil
+
 }

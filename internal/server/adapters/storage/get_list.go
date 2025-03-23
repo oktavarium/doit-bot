@@ -10,17 +10,17 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func (db *db) GetTask(ctx context.Context, actorId string, taskId string) (*planner.Task, error) {
-	var result dbo.Task
-	filter := bson.M{"id": taskId, "owner_id": actorId}
-	if err := db.tasks.FindOne(ctx, filter).Decode(&result); err != nil {
+func (db *db) GetList(ctx context.Context, actorId string, listId string) (*planner.List, error) {
+	var result dbo.List
+	filter := bson.M{"id": listId, "owner_id": actorId}
+	if err := db.lists.FindOne(ctx, filter).Decode(&result); err != nil {
 		switch {
 		case errors.Is(err, mongo.ErrNoDocuments):
-			return nil, planner.ErrTaskNotFound
+			return nil, planner.ErrNotFound
 		default:
 			return nil, errors.Join(planner.ErrInfrastructureError, err)
 		}
 	}
 
-	return result.ToDomainTask()
+	return result.ToDomainList()
 }

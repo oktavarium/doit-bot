@@ -9,35 +9,32 @@ import (
 	"github.com/oktavarium/doit-bot/internal/server/ports/httpapi/common"
 )
 
-func (p *Planner) GetTasks(c *gin.Context, param GetTasksParams) {
+func (p *Planner) GetLists(c *gin.Context) {
 	actorId, ok := common.ActorIdFromContext(c)
 	if !ok {
 		common.ErrorToContext(c, common.NewInternalServerError(errors.New("empty context")))
 		return
 	}
 
-	cmd := query.GetTasks{
+	cmd := query.GetLists{
 		UserId: actorId,
-		ListId: param.ListId,
 	}
 
-	tasks, err := p.app.Queries.GetTasks.Handle(c, cmd)
+	tasks, err := p.app.Queries.GetLists.Handle(c, cmd)
 	if err != nil {
 		common.ErrorToContext(c, common.FromAppError(err))
 		return
 	}
 
-	result := make([]Task, 0, len(tasks))
+	result := make([]List, 0, len(tasks))
 	for _, task := range tasks {
-		result = append(result, Task{
+		result = append(result, List{
 			Id:          task.Id(),
 			OwnerId:     task.OwnerId(),
-			ListId:      task.ListId(),
 			Name:        task.Name(),
 			Description: task.Description(),
-			Status:      task.Status(),
 		})
 	}
 
-	c.JSON(http.StatusOK, TasksResponse{Tasks: result, Status: newStatusResponse(http.StatusOK, "")})
+	c.JSON(http.StatusOK, ListsResponse{Lists: result, Status: newStatusResponse(http.StatusOK, "")})
 }

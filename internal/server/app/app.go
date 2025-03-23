@@ -29,12 +29,16 @@ type commands struct {
 	CreateUser command.CreateUserHandler
 	DeleteTask command.DeleteTaskHandler
 	UpdateTask command.UpdateTaskHandler
+	CreateList command.CreateListHandler
+	DeleteList command.DeleteListHandler
+	UpdateList command.UpdateListHandler
 }
 
 type queries struct {
 	GetTasks      query.GetTasksHandler
 	GetUserByTgId query.GetUserByTgIdHandler
 	GetTask       query.GetTaskHandler
+	GetLists      query.GetListsHandler
 }
 
 func New(
@@ -54,11 +58,15 @@ func New(
 			CreateUser: command.NewCreateUserHandler(usersDomainService),
 			DeleteTask: command.NewDeleteTaskHandler(plannerDomainSerice),
 			UpdateTask: command.NewUpdateTaskHandler(plannerDomainSerice),
+			CreateList: command.NewCreateListHandler(plannerDomainSerice),
+			DeleteList: command.NewDeleteListHandler(plannerDomainSerice),
+			UpdateList: command.NewUpdateListHandler(plannerDomainSerice),
 		},
 		Queries: queries{
 			GetTasks:      query.NewGetTaskskHandler(plannerDomainSerice),
 			GetUserByTgId: query.NewGetUserByTgIdHandler(usersDomainService),
 			GetTask:       query.NewGetTaskHandler(plannerDomainSerice),
+			GetLists:      query.NewGetListskHandler(plannerDomainSerice),
 		},
 	}
 }

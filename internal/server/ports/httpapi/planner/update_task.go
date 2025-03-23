@@ -23,6 +23,8 @@ func (p *Planner) UpdateTask(c *gin.Context, id string) {
 	}
 	cmd := command.UpdateTask{
 		ActorId:     actorId,
+		TaskId:      id,
+		ListId:      request.ListId,
 		Status:      request.Status,
 		Name:        request.Name,
 		Description: request.Description,

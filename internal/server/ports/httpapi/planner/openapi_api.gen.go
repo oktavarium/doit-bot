@@ -13,9 +13,21 @@ import (
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// Get all lists
+	// (GET /planner/lists)
+	GetLists(c *gin.Context)
+	// Create a new list
+	// (POST /planner/lists)
+	CreateList(c *gin.Context)
+	// Delete task
+	// (DELETE /planner/lists/{id})
+	DeleteList(c *gin.Context, id string)
+	// Update list parameters
+	// (PATCH /planner/lists/{id})
+	UpdateList(c *gin.Context, id string)
 	// Get all tasks
 	// (GET /planner/tasks)
-	GetTasks(c *gin.Context)
+	GetTasks(c *gin.Context, params GetTasksParams)
 	// Create a new task
 	// (POST /planner/tasks)
 	CreateTask(c *gin.Context)
@@ -36,8 +48,8 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(c *gin.Context)
 
-// GetTasks operation middleware
-func (siw *ServerInterfaceWrapper) GetTasks(c *gin.Context) {
+// GetLists operation middleware
+func (siw *ServerInterfaceWrapper) GetLists(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -46,7 +58,94 @@ func (siw *ServerInterfaceWrapper) GetTasks(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetTasks(c)
+	siw.Handler.GetLists(c)
+}
+
+// CreateList operation middleware
+func (siw *ServerInterfaceWrapper) CreateList(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.CreateList(c)
+}
+
+// DeleteList operation middleware
+func (siw *ServerInterfaceWrapper) DeleteList(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id string
+
+	err = runtime.BindStyledParameter("simple", false, "id", c.Param("id"), &id)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.DeleteList(c, id)
+}
+
+// UpdateList operation middleware
+func (siw *ServerInterfaceWrapper) UpdateList(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id string
+
+	err = runtime.BindStyledParameter("simple", false, "id", c.Param("id"), &id)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.UpdateList(c, id)
+}
+
+// GetTasks operation middleware
+func (siw *ServerInterfaceWrapper) GetTasks(c *gin.Context) {
+
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetTasksParams
+
+	// ------------- Optional query parameter "listId" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "listId", c.Request.URL.Query(), &params.ListId)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter listId: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetTasks(c, params)
 }
 
 // CreateTask operation middleware
@@ -137,6 +236,10 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 		ErrorHandler:       errorHandler,
 	}
 
+	router.GET(options.BaseURL+"/planner/lists", wrapper.GetLists)
+	router.POST(options.BaseURL+"/planner/lists", wrapper.CreateList)
+	router.DELETE(options.BaseURL+"/planner/lists/:id", wrapper.DeleteList)
+	router.PATCH(options.BaseURL+"/planner/lists/:id", wrapper.UpdateList)
 	router.GET(options.BaseURL+"/planner/tasks", wrapper.GetTasks)
 	router.POST(options.BaseURL+"/planner/tasks", wrapper.CreateTask)
 	router.DELETE(options.BaseURL+"/planner/tasks/:id", wrapper.DeleteTask)

@@ -7,5 +7,6 @@ const (
 const (
 	usersCollection      = "users"
 	tasksCollection      = "tasks"
+	listsCollection      = "lists"
 	migrationsCollection = "migrations"
 )
