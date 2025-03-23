@@ -8,7 +8,7 @@ import (
 
 const (
 	maxTaskNameLength        = 64
-	maxTaskDescriptionLength = 1024
+	maxTaskDescriptionLength = 256
 )
 
 func isTaskValid(t *Task) error {
@@ -23,13 +23,25 @@ func isTaskValid(t *Task) error {
 	return nil
 }
 
+func isListValid(l *List) error {
+	if l == nil {
+		return ErrEmptyList
+	}
+
+	if !l.IsValid() {
+		return ErrInvalidList
+	}
+
+	return nil
+}
+
 func validateName(name string) error {
 	if name == "" {
-		return ErrEmptyTaskName
+		return ErrEmptyName
 	}
 
 	if len(name) > maxTaskNameLength {
-		return ErrTooBigTaskName
+		return ErrTooBigName
 	}
 
 	return nil
@@ -37,7 +49,7 @@ func validateName(name string) error {
 
 func validateDescription(description string) error {
 	if len(description) > maxTaskDescriptionLength {
-		return ErrTooBigTaskDescription
+		return ErrTooBigDescription
 	}
 	return nil
 }
@@ -46,15 +58,6 @@ func validateId(id string) error {
 	_, err := uuid.Parse(id)
 	if err != nil {
 		return errors.Join(ErrBadId, err)
-	}
-
-	return nil
-}
-
-func validateOwnerId(id string) error {
-	_, err := uuid.Parse(id)
-	if err != nil {
-		return errors.Join(ErrInternalError, err)
 	}
 
 	return nil

@@ -9,13 +9,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func (db *db) DeleteTask(ctx context.Context, actorId string, taskId string) error {
-	filter := bson.M{"id": taskId, "owner_id": actorId}
+func (db *db) DeleteList(ctx context.Context, actorId string, listId string) error {
+	filter := bson.M{"id": listId, "owner_id": actorId}
 
-	if _, err := db.tasks.DeleteOne(ctx, filter); err != nil {
+	if _, err := db.lists.DeleteOne(ctx, filter); err != nil {
 		switch {
 		case errors.Is(err, mongo.ErrNoDocuments):
-			return planner.ErrTaskNotFound
+			return planner.ErrNotFound
 		default:
 			return errors.Join(planner.ErrInfrastructureError, err)
 		}

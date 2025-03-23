@@ -1,15 +1,13 @@
 package planner
 
 import (
-	"errors"
 	"fmt"
-
-	"github.com/google/uuid"
 )
 
 type Task struct {
 	id          string
 	ownerId     string
+	listId      string
 	name        string
 	description string
 	status      bool
@@ -18,18 +16,27 @@ type Task struct {
 
 func newTask(
 	ownerId string,
+	listId *string,
 	name string,
 	description string,
 ) (*Task, error) {
-	if err := validateOwnerId(ownerId); err != nil {
+	if err := validateId(ownerId); err != nil {
 		return nil, fmt.Errorf("validate owner id: %w", err)
+	}
+
+	var list string
+	if listId != nil {
+		if err := validateId(*listId); err != nil {
+			return nil, fmt.Errorf("validate list id: %w", err)
+		}
+		list = *listId
 	}
 
 	if err := validateName(name); err != nil {
 		return nil, fmt.Errorf("validate name: %w", err)
 	}
 
-	if err := validateDescription(name); err != nil {
+	if err := validateDescription(description); err != nil {
 		return nil, fmt.Errorf("validate description: %w", err)
 	}
 
@@ -41,6 +48,7 @@ func newTask(
 	return &Task{
 		id:          newId,
 		ownerId:     ownerId,
+		listId:      list,
 		name:        name,
 		description: description,
 		_valid:      true,
@@ -53,6 +61,10 @@ func (t *Task) Id() string {
 
 func (t *Task) OwnerId() string {
 	return t.ownerId
+}
+
+func (t *Task) ListId() string {
+	return t.listId
 }
 
 func (t *Task) Name() string {
@@ -72,6 +84,10 @@ func (t *Task) IsValid() bool {
 }
 
 func (t *Task) SetStatus(actorId string, status bool) error {
+	if err := validateId(actorId); err != nil {
+		return fmt.Errorf("validate actor id: %w", err)
+	}
+
 	if t.ownerId != actorId {
 		return ErrForbidden
 	}
@@ -85,6 +101,10 @@ func (t *Task) SetStatus(actorId string, status bool) error {
 }
 
 func (t *Task) SetName(actorId string, name string) error {
+	if err := validateId(actorId); err != nil {
+		return fmt.Errorf("validate actor id: %w", err)
+	}
+
 	if t.ownerId != actorId {
 		return ErrForbidden
 	}
@@ -102,6 +122,10 @@ func (t *Task) SetName(actorId string, name string) error {
 }
 
 func (t *Task) SetDescription(actorId string, description string) error {
+	if err := validateId(actorId); err != nil {
+		return fmt.Errorf("validate actor id: %w", err)
+	}
+
 	if t.ownerId != actorId {
 		return ErrForbidden
 	}
@@ -118,18 +142,31 @@ func (t *Task) SetDescription(actorId string, description string) error {
 	return nil
 }
 
-func generateId() (string, error) {
-	newId, err := uuid.NewV7()
-	if err != nil {
-		return "", errors.Join(ErrInternalError, err)
+func (t *Task) SetListId(actorId string, listId string) error {
+	if err := validateId(actorId); err != nil {
+		return fmt.Errorf("validate actor id: %w", err)
 	}
 
-	return newId.String(), nil
+	if err := validateId(listId); err != nil {
+		return fmt.Errorf("validate list id: %w", err)
+	}
+
+	if t.ownerId != actorId {
+		return ErrForbidden
+	}
+
+	if t.listId == listId {
+		return ErrNothingChaned
+	}
+
+	t.listId = listId
+	return nil
 }
 
 func RestoreTaskFromDB(
 	id string,
 	ownerId string,
+	listId string,
 	name string,
 	description string,
 	status bool,
@@ -138,7 +175,7 @@ func RestoreTaskFromDB(
 		return nil, fmt.Errorf("validate task id: %w", err)
 	}
 
-	if err := validateOwnerId(ownerId); err != nil {
+	if err := validateId(ownerId); err != nil {
 		return nil, fmt.Errorf("validate owner id: %w", err)
 	}
 
@@ -153,6 +190,7 @@ func RestoreTaskFromDB(
 	return &Task{
 		id:          id,
 		ownerId:     ownerId,
+		listId:      listId,
 		name:        name,
 		description: description,
 		status:      status,

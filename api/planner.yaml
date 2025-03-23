@@ -4,6 +4,102 @@ info:
   description: API for task management
   version: 1.0.0
 paths:
+  /planner/lists:
+    post:
+      operationId: createList
+      summary: Create a new list
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewListRequest'
+      responses:
+        '201':
+          description: "ok"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListIdResponse'
+        default:
+          description: "default"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+    get:
+      operationId: getLists
+      summary: Get all lists
+      responses:
+        '201':
+          description: "ok"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ListsResponse'
+        default:
+          description: "default"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  /planner/lists/{id}:
+    patch:
+      operationId: updateList
+      summary: Update list parameters
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/UpdateListRequest'
+      responses:
+        '200':
+          description: "ok"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Status'
+        default:
+          description: "default"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+    delete:
+      operationId: deleteList
+      summary: Delete task
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+          '200':
+            description: "ok"
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Status'
+          default:
+            description: "default"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Status'
   /planner/tasks:
     post:
       operationId: createTask
@@ -30,6 +126,12 @@ paths:
     get:
       operationId: getTasks
       summary: Get all tasks
+      parameters:
+        - name: listId
+          in: query
+          description: get tasks from list
+          schema:
+            type: string
       responses:
         '201':
           description: "ok"
@@ -111,6 +213,8 @@ components:
           type: string
         description:
           type: string
+        listId:
+          type: string
     Task:
         required:
         - id
@@ -118,6 +222,7 @@ components:
         - description
         - status
         - owner_id
+        - list_id
         properties:
           id:
             type: string
@@ -129,6 +234,8 @@ components:
             type: string
           status:
             type: boolean
+          list_id:
+            type: string
     TasksResponse:
         required:
           - status
@@ -157,6 +264,62 @@ components:
         name:
           type: string
         description:
+          type: string
+        listId:
+          type: string
+    NewListRequest:
+      required:
+        - name
+        - description
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+    UpdateListRequest:
+      properties:
+        status:
+          type: boolean
+        name:
+          type: string
+        description:
+          type: string
+        listId:
+          type: string
+    ListIdResponse:
+      required:
+        - id
+        - status
+      properties:
+        id:
+          type: string
+        status:
+          $ref: '#/components/schemas/Status'
+    ListsResponse:
+      required:
+        - status
+        - lists
+      properties:
+        lists:
+          type: array
+          items:
+            $ref: '#/components/schemas/List'
+        status:
+          $ref: '#/components/schemas/Status'
+    List:
+      required:
+      - id
+      - name
+      - description
+      - owner_id
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        owner_id:
           type: string
     Status:
       required:

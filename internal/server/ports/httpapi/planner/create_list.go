@@ -9,31 +9,30 @@ import (
 	"github.com/oktavarium/doit-bot/internal/server/ports/httpapi/common"
 )
 
-func (p *Planner) CreateTask(c *gin.Context) {
+func (p *Planner) CreateList(c *gin.Context) {
 	actorId, ok := common.ActorIdFromContext(c)
 	if !ok {
 		common.ErrorToContext(c, common.NewInternalServerError(errors.New("empty context")))
 		return
 	}
 
-	var request NewTaskRequest
+	var request NewListRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
 		common.ErrorToContext(c, common.NewBadRequestError(err))
 		return
 	}
 
-	cmd := command.CreateTask{
+	cmd := command.CreateList{
 		OwnerId:     actorId,
-		ListId:      request.ListId,
 		Name:        request.Name,
 		Description: request.Description,
 	}
 
-	taskId, err := p.app.Commands.CreateTask.Handle(c, cmd)
+	taskId, err := p.app.Commands.CreateList.Handle(c, cmd)
 	if err != nil {
 		common.ErrorToContext(c, common.FromAppError(err))
 		return
 	}
 
-	c.JSON(http.StatusCreated, TaskIdResponse{Id: taskId, Status: newStatusResponse(http.StatusCreated, "")})
+	c.JSON(http.StatusCreated, ListIdResponse{Id: taskId, Status: newStatusResponse(http.StatusCreated, "")})
 }
